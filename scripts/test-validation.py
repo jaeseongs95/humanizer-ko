@@ -2,6 +2,7 @@
 """정상 패키지와 손상된 배포 파일에 대한 검증기의 동작을 확인한다."""
 
 from pathlib import Path
+import json
 import shutil
 import subprocess
 import sys
@@ -56,7 +57,11 @@ class PackageValidationTests(unittest.TestCase):
         self.assert_rejected("THIRD_PARTY_NOTICES.md")
 
     def test_plugin_version_mismatch(self):
-        self.replace(".claude-plugin/plugin.json", '"1.0.0"', '"9.0.0"')
+        path = self.root / ".claude-plugin/plugin.json"
+        plugin = json.loads(path.read_text(encoding="utf-8"))
+        major, minor, patch = map(int, plugin["version"].split("."))
+        plugin["version"] = f"{major + 1}.{minor}.{patch}"
+        path.write_text(json.dumps(plugin, ensure_ascii=False), encoding="utf-8")
         self.assert_rejected("버전을 일치")
 
     def test_pattern_gap(self):

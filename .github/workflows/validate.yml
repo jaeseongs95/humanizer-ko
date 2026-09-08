@@ -24,6 +24,8 @@ jobs:
         run: python3 scripts/validate-package.py
       - name: 검증기 회귀 테스트
         run: python3 scripts/test-validation.py
+      - name: 기록된 행동 출력의 보호 문자열 검증
+        run: python3 scripts/check-behavior-artifacts.py
       - name: Skill 탐색 검증
         run: npx --yes skills@1.5.20 add . --list
       - name: Claude marketplace와 플러그인 검증

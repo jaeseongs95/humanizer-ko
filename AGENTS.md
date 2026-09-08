@@ -10,7 +10,9 @@
 - `agents/openai.yaml`은 OpenAI 호환 UI의 이름과 기본 프롬프트를 정의합니다.
 - `.claude-plugin/`은 Claude 플러그인과 marketplace 메타데이터를 제공합니다.
 - `scripts/validate-package.py`는 공유 식별자, 버전, 패턴 번호와 라이선스 고지를 검사합니다.
+- `scripts/check-behavior-artifacts.py`는 기록된 출력에서 코드·인용·URL·서식의 문자 보존을 확인합니다. 의미·자연스러움은 판정하지 않습니다.
 - `tests/BEHAVIOR_CASES.md`는 수동 행동 검증의 입력과 합격 조건을 정의합니다.
+- `tests/EVALUATION_PROTOCOL.md`는 출력 전에 고정하는 의미 보존 판정 기준과 독립 검증 절차를 정의합니다. `tests/HOLDOUT_CASES.md`는 별도 주제의 검증 입력입니다.
 
 ## 변경 규칙
 
@@ -38,9 +40,12 @@
 ```bash
 python3 scripts/validate-package.py
 python3 scripts/test-validation.py
+python3 scripts/check-behavior-artifacts.py
 npx --yes skills@1.5.20 add . --list
 claude plugin validate .
 claude plugin validate .claude-plugin/plugin.json
 ```
 
 Codex 환경에서는 `skill-creator/scripts/quick_validate.py`도 실행합니다. 문체 동작이 바뀌면 `tests/BEHAVIOR_CASES.md`의 관련 사례를 실제로 검토하고, 결과가 사실 보존과 과잉 편집 방지 조건을 만족하는지 확인합니다.
+
+행동 검증은 `tests/EVALUATION_PROTOCOL.md`의 기준을 먼저 고정한 뒤 실행합니다. 출력에 맞춰 합격 기준을 바꾸지 말고, 기준 변경이나 해석 차이는 기록합니다. 정적 패키지 검사 통과를 의미 보존의 증거로 사용하지 않습니다.

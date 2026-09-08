@@ -1,10 +1,34 @@
 # Humanizer KO
 
-한국어 글의 AI식 문체를 줄이면서 사실과 의미를 보존하는 비공식 현지화 Skill입니다. [`blader/humanizer`](https://github.com/blader/humanizer) v3.0.0을 기반으로 하되, 한국어에서 실제로 드러나는 어미·접속부사·번역투·문단 리듬에 맞춰 규칙과 예시를 새로 작성했습니다.
+한국어 글의 AI식 문체를 줄이면서 사실과 의미를 보존하는 비공식 현지화 Skill입니다. [`blader/humanizer`](https://github.com/blader/humanizer) v3.0.0을 기반으로 하되, 한국어에서 실제로 드러나는 어미·접속부사·번역투·문단 리듬에 맞춰 규칙과 예시를 새로 작성했습니다. ChatGPT, Codex와 Claude Code에서 같은 Skill 원본을 사용할 수 있습니다.
 
 AI 탐지기 통과를 보장하는 도구가 아닙니다. 문장의 출처를 숨기거나 가짜 경험과 오탈자를 만드는 대신, 읽는 사람에게 불필요한 과장·반복·틀에 박힌 형식을 줄이는 편집 지침을 제공합니다.
 
+## 적용 구조
+
+일반 채팅과 완성형 산문 작업을 두 단계로 나눕니다.
+
+| 단계 | 적용 대상 | 적용 방법 |
+| --- | --- | --- |
+| 기본 한국어 문체 | 일반 질문, 진행 상황, 짧은 확인 | 각 호스트의 맞춤형 지침이나 전역 지침에 간단한 원칙을 둡니다. 전체 Skill은 호출하지 않습니다. |
+| 전체 `humanizer-ko` | README, 메일, 보고서, 안내문, 여러 문단의 설명문 작성·편집 | 설치된 Skill을 자동 또는 명시적으로 호출하고 25개 패턴과 의미 보존 검증을 적용합니다. |
+
+기본 문체는 답이나 결과부터 말하고 의례적인 인사, 불필요한 제목과 과장을 줄이는 수준입니다. 전체 Skill은 새 글의 조사와 내용 작성을 끝낸 뒤 초안을 다듬거나, 기존 글의 의미와 보호 문자열을 대조해야 할 때 사용합니다.
+
 ## 설치
+
+### ChatGPT 데스크톱과 Codex 플러그인
+
+Codex 플러그인 marketplace에 저장소를 추가하고 플러그인을 설치합니다.
+
+```bash
+codex plugin marketplace add jaeseongs95/humanizer-ko
+codex plugin add humanizer-ko@humanizer-ko
+```
+
+설치 후 ChatGPT에서는 `@humanizer-ko`, Codex에서는 `$humanizer-ko`로 직접 호출할 수 있습니다. ChatGPT와 Codex는 Skill의 `description`이 요청과 일치할 때 자동으로 선택할 수도 있습니다. 현재 제품의 설치 위치와 제공 범위는 [OpenAI의 Skills 문서](https://learn.chatgpt.com/ko-KR/docs/build-skills)와 [플러그인 문서](https://developers.openai.com/plugins/build/plugins)를 따릅니다.
+
+### 독립형 Codex Skill
 
 저장소를 받은 뒤 프로젝트 폴더에서 Skill 구조를 확인합니다.
 
@@ -18,20 +42,30 @@ Codex에서 모든 프로젝트에 사용할 수 있게 설치합니다. 저장�
 npx skills add jaeseongs95/humanizer-ko --global --agent codex
 ```
 
-다른 프로젝트에만 설치하려면 그 프로젝트 폴더에서 `--global`을 빼고 실행합니다. 설치된 Skill은 다음 작업부터 사용합니다. 수동 설치 시에는 `SKILL.md` 하나만 복사하지 말고 `LICENSE`와 `THIRD_PARTY_NOTICES.md`를 포함한 저장소 폴더 전체를 설치 위치에 복사합니다.
+다른 프로젝트에만 설치하려면 그 프로젝트 폴더에서 `--global`을 빼고 실행합니다. 설치된 Skill은 다음 작업부터 사용합니다. 수동 설치 시에는 `skills/humanizer-ko/` 디렉터리 전체를 복사합니다. 이 디렉터리에는 Skill 원본과 함께 `LICENSE`, `THIRD_PARTY_NOTICES.md`가 들어 있습니다.
 
-Claude Code에서는 다음 명령으로 설치합니다. Claude의 호출 표기는 호스트 규칙에 따라 `/humanizer-ko:humanizer-ko`이며, Codex에서는 `$humanizer-ko`입니다.
+### Claude Code
+
+Claude Code에서는 다음 명령으로 설치합니다.
 
 ```text
 /plugin marketplace add jaeseongs95/humanizer-ko
 /plugin install humanizer-ko@humanizer-ko
 ```
 
-## 평소 답변에도 적용
+### 1.x에서 이전
 
-Skill 자체의 자동 선택은 허용되어 있지만, 실제 호출 여부는 요청과 `description`의 일치 여부에 따라 달라집니다. 일반 답변에는 간단한 문체 원칙만 적용하고 README·메일·보고서·안내문 등 한국어 산문을 작성하거나 편집할 때 전체 Skill을 사용하려면 [`examples/AGENTS.humanizer-ko.md`](examples/AGENTS.humanizer-ko.md)의 두 섹션을 Codex 전역 `AGENTS.md`에 추가합니다.
+2.0.0부터 Skill 원본 경로가 저장소 루트의 `SKILL.md`에서 `skills/humanizer-ko/SKILL.md`로 바뀌었습니다. 저장소 전체나 marketplace에서 다시 설치하면 새 경로를 자동으로 찾습니다. 루트의 `SKILL.md`만 복사해 사용했다면 기존 복사본을 제거하고, 라이선스·제3자 고지가 포함된 `skills/humanizer-ko/` 디렉터리 전체를 설치하세요.
 
-기본 위치는 `~/.codex/AGENTS.md`이고, `CODEX_HOME`을 따로 지정했다면 그 디렉터리의 `AGENTS.md`를 사용합니다. 기존 전역 지침을 파일 전체로 덮어쓰지 말고 예시의 두 섹션만 병합합니다. 같은 위치에 비어 있지 않은 `AGENTS.override.md`가 있으면 이 파일이 `AGENTS.md`보다 우선합니다.
+## 기본 문체를 상시 적용
+
+Skill 자체의 자동 선택은 허용되어 있지만, 실제 호출 여부는 요청과 `description`의 일치 여부에 따라 달라집니다. 호스트별 예시는 일반 답변에 기본 문체만 적용하고, 완성형 한국어 산문을 작성하거나 편집할 때 전체 Skill을 사용하도록 구성했습니다.
+
+- ChatGPT: [`examples/CHATGPT.custom-instructions.humanizer-ko.md`](examples/CHATGPT.custom-instructions.humanizer-ko.md)의 내용을 맞춤형 지침에 병합합니다. 설정 방법은 [ChatGPT 개인화 문서](https://learn.chatgpt.com/ko-KR/docs/personalize)를 참고하세요.
+- Codex: [`examples/AGENTS.humanizer-ko.md`](examples/AGENTS.humanizer-ko.md)의 두 섹션을 전역 `AGENTS.md`에 병합합니다.
+- Claude Code: [`examples/CLAUDE.humanizer-ko.md`](examples/CLAUDE.humanizer-ko.md)의 내용을 사용자 `CLAUDE.md`에 병합합니다.
+
+Codex 전역 지침의 기본 위치는 `~/.codex/AGENTS.md`입니다. `CODEX_HOME`을 따로 지정했다면 그 디렉터리의 `AGENTS.md`를 사용합니다. 기존 전역 지침을 파일 전체로 덮어쓰지 말고 예시의 두 섹션만 병합합니다. 같은 위치에 비어 있지 않은 `AGENTS.override.md`가 있으면 이 파일이 `AGENTS.md`보다 우선합니다.
 
 Codex는 실행이나 TUI 세션을 시작할 때 지침을 읽으므로, 변경 후 새 작업을 시작합니다. 다음 명령으로 적용된 지침을 확인할 수 있습니다.
 
@@ -39,11 +73,19 @@ Codex는 실행이나 TUI 세션을 시작할 때 지침을 읽으므로, 변경
 codex --ask-for-approval never "현재 적용 중인 전역 문체 지침과 humanizer-ko 호출 조건을 요약해 주세요."
 ```
 
-이 설정은 일반 질문·진행 상황·짧은 확인에는 기본 문체만 적용하고, 한국어 산문 산출물과 문체 교정에는 `humanizer-ko`를 사용합니다. 영어 전용 작업과 코드·명령어·URL·직접 인용·구조화 데이터는 편집 대상에서 제외합니다.
+이 설정은 일반 질문·진행 상황·짧은 확인에는 기본 문체만 적용하고, 완성형 한국어 산문과 직접적인 문체 교정에는 `humanizer-ko`를 사용합니다. 영어 전용 작업과 코드·명령어·URL·직접 인용·구조화 데이터는 편집 대상에서 제외합니다.
 
 ## 사용
 
-직접 호출할 때는 `$humanizer-ko`를 사용합니다.
+호스트에 맞는 호출 표기를 사용합니다.
+
+| 호스트 | 직접 호출 |
+| --- | --- |
+| ChatGPT | `@humanizer-ko` |
+| Codex | `$humanizer-ko` |
+| Claude Code | `/humanizer-ko:humanizer-ko` |
+
+Codex에서 기존 글을 다듬는 예:
 
 ```text
 $humanizer-ko를 사용해 아래 글의 사실은 유지하면서 자연스러운 한국어로 다듬어 주세요.
@@ -67,6 +109,13 @@ $humanizer-ko를 사용해 주세요.
 
 ```text
 $humanizer-ko로 docs/notice.md의 한국어 산문을 다듬어 주세요.
+```
+
+새 글을 작성할 때는 필요한 독자, 목적과 사실을 먼저 제공합니다. Skill은 자료 조사나 기술 검증을 대신하지 않고, 내용이 갖춰진 초안을 자연스럽게 다듬습니다.
+
+```text
+$humanizer-ko를 사용해 운영팀에 보낼 배포 안내 메일을 작성해 주세요.
+사실: 배포일은 2026년 9월 12일, 점검 시간은 14:00~15:00, 담당자는 김민수입니다.
 ```
 
 ## 동작 원칙
@@ -122,7 +171,7 @@ python3 scripts/test-validation.py
 python3 scripts/check-behavior-artifacts.py
 ```
 
-Codex Skill 기본 구조는 Codex에 포함된 `skill-creator/scripts/quick_validate.py`로 추가 확인합니다. GitHub Actions에서는 패키지 검사, `skills` CLI 탐색, Claude 플러그인 검증을 실행합니다.
+Codex Skill 기본 구조는 Codex에 포함된 `skill-creator/scripts/quick_validate.py`로, 루트 플러그인 manifest는 `plugin-creator/scripts/validate_plugin.py`로 추가 확인합니다. GitHub Actions에서는 패키지 검사, `skills` CLI 탐색, Codex 플러그인과 Claude 플러그인 검증을 실행합니다.
 
 행동 검증 사례는 [`tests/BEHAVIOR_CASES.md`](tests/BEHAVIOR_CASES.md)에 있습니다. 의미·문체 평가는 [고정 규약](tests/EVALUATION_PROTOCOL.md)을 따르고, `check-behavior-artifacts.py`는 기록된 출력의 보호 문자열만 확인합니다. 이 검사 통과를 의미 보존의 증거로 사용하지 않으며, 탐지기 점수도 합격 기준으로 쓰지 않습니다.
 
@@ -136,6 +185,7 @@ Codex Skill 기본 구조는 Codex에 포함된 `skill-creator/scripts/quick_val
 
 ## 버전 기록
 
+- **2.0.0** - 일반 채팅의 기본 문체와 완성형 산문의 전체 Skill 적용을 분리했습니다. Skill 원본을 `skills/humanizer-ko/`로 옮기고 ChatGPT·Codex 공용 플러그인 manifest, 호스트별 지침 예시와 [호출 경계 검증](tests/VALIDATION_2.0.0.md)을 추가했습니다.
 - **1.0.2** - 문체 패턴과 원문 주장 보존의 충돌을 줄이고, 편집 전후 의미 대조·부분 복원·문체 샘플 우선순위를 명확히 했습니다. [원인 분석과 검증 기록](tests/ROOT_CAUSE_1.0.2.md)을 참고하세요.
 - **1.0.1** - 설명을 의무로 바꾸던 3번 예시를 수정하고, 주장 강도 보존과 무리한 문장 병합 방지 지침을 보강했습니다. 관련 회귀 사례와 [재검증 기록](tests/VALIDATION_1.0.1.md)을 추가했습니다.
 - **1.0.0** - `blader/humanizer` v3.0.0을 기준으로 한국어 패턴 25개, 새 한국어 예시, Codex 인터페이스와 배포 검증을 추가한 최초 공개 준비 버전입니다.

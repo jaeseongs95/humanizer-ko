@@ -1,0 +1,27 @@
+{
+  "name": "humanizer-ko",
+  "version": "2.0.0",
+  "description": "Humanizer의 비공식 한국어 현지화 포크. 사실과 의미를 유지하며 한국어 산문을 작성하고 편집합니다.",
+  "author": {
+    "name": "jaeseongs95",
+    "url": "https://github.com/jaeseongs95"
+  },
+  "homepage": "https://github.com/jaeseongs95/humanizer-ko",
+  "repository": "https://github.com/jaeseongs95/humanizer-ko",
+  "license": "MIT",
+  "keywords": ["korean", "writing", "editing", "humanize", "prose", "style"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Humanizer KO",
+    "shortDescription": "사실과 의미를 유지하며 한국어 산문을 자연스럽게 작성·편집",
+    "longDescription": "README, 메일, 보고서, 안내문과 여러 문단의 설명문을 작성하거나 편집할 때 사실과 의미를 보존하면서 AI식 한국어 표현을 줄입니다.",
+    "developerName": "jaeseongs95",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "이 글의 사실을 유지하면서 자연스러운 한국어로 다듬어 주세요.",
+      "이 README의 한국어 산문만 자연스럽게 다듬어 주세요.",
+      "내 문체 샘플에 맞춰 이 글을 편집해 주세요."
+    ]
+  }
+}

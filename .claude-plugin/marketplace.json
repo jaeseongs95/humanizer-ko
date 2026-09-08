@@ -10,7 +10,7 @@
     {
       "name": "humanizer-ko",
       "source": "./",
-      "description": "Humanizer의 비공식 한국어 현지화 포크. 사실과 의미를 유지하며 한국어 문체를 편집합니다.",
+      "description": "Humanizer의 비공식 한국어 현지화 포크. 사실과 의미를 유지하며 한국어 산문을 작성하고 편집합니다.",
       "license": "MIT",
       "keywords": ["korean", "writing", "editing", "humanize", "prose", "style"]
     }

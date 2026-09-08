@@ -1,0 +1,25 @@
+{
+  "skillSha256": "BF918D07191C2D8260741386E2C443ED032A26F94C20F08A094F65CBDFF1E034",
+  "executor": {
+    "model": "gpt-5.6-terra",
+    "reasoning": "high"
+  },
+  "outputs": {
+    "R01": "네, 맞아요. 저장하면 다음 작업부터 적용됩니다.",
+    "R02": "제목: 배포 안내\n\n운영팀 여러분께,\n\n배포일은 2026년 9월 12일입니다.\n점검 시간은 14:00~15:00입니다.\n담당자는 김민수입니다.\n운영 문서는 https://example.com/runbook 에 있습니다.\n\n감사합니다.",
+    "R03": "운영팀은 “오류 2건을 확인했다”고 보고했습니다. 점검 명령은 `check --dry-run`입니다. 자세한 절차는 https://example.com/runbook?mode=test&step=2 에 있습니다.",
+    "R04": "This release keeps the Retry-After header unchanged. timeout을 45초로 설정합니다. The rollback command is `deploy --rollback`."
+  },
+  "audit": {
+    "model": "gpt-5.6-sol",
+    "reasoning": "high",
+    "results": {
+      "R01": "pass",
+      "R02": "pass",
+      "R03": "pass",
+      "R04": "fail"
+    },
+    "overall": "fail",
+    "reason": "R04에서 과장과 함께 ‘이번 변경은 업데이트’라는 한국어의 기본 명제까지 삭제했다."
+  }
+}

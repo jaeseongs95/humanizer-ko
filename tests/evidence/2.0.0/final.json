@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "skillSha256": "EE4A895555DC9E539BF6EBE6E37F52A8F7F53263E7ECC171B1B4EA590F9ED78F",
+  "executor": {
+    "model": "gpt-5.6-terra",
+    "reasoning": "high"
+  },
+  "sources": {
+    "R01": "이 설정 맞아? 저장하면 다음 작업부터 적용되는 거지?",
+    "R02": "다음 사실만 사용해 운영팀에 보낼 배포 안내 메일을 작성해 주세요. 배포일은 2026년 9월 12일, 점검 시간은 14:00~15:00, 담당자는 김민수입니다. 운영 문서는 https://example.com/runbook 에 있습니다. 최종 메일만 작성해 주세요.",
+    "R03": "아래 공지의 한국어 산문을 자연스럽게 다듬고 최종본만 보여 주세요. 좋은 질문입니다! 지금부터 점검 내용을 살펴보겠습니다. 운영팀은 “오류 2건을 확인했다”고 보고했습니다. 또한 점검 명령은 `check --dry-run`입니다. 자세한 절차는 https://example.com/runbook?mode=test&step=2 에 있습니다. 도움이 되었기를 바랍니다.",
+    "R04": "다음 문서의 한국어 산문만 자연스럽게 다듬어 주세요. This release keeps the Retry-After header unchanged. 이번 변경은 단순한 조정이 아니라 새로운 시대를 여는 혁신적인 업데이트입니다. timeout은 45초로 설정합니다. The rollback command is `deploy --rollback`."
+  },
+  "outputs": {
+    "R01": "네, 저장하면 다음 작업부터 적용됩니다.",
+    "R02": "제목: 2026년 9월 12일 배포 점검 안내\n\n운영팀 여러분,\n\n2026년 9월 12일 배포를 진행합니다. 점검 시간은 14:00~15:00이며, 담당자는 김민수입니다.\n\n운영 문서: https://example.com/runbook\n\n감사합니다.",
+    "R03": "운영팀은 “오류 2건을 확인했다”고 보고했습니다. 점검 명령은 `check --dry-run`입니다. 자세한 절차는 https://example.com/runbook?mode=test&step=2 에 있습니다.",
+    "R04": "This release keeps the Retry-After header unchanged. 이번 변경은 업데이트입니다. timeout은 45초로 설정합니다. The rollback command is `deploy --rollback`."
+  }
+}

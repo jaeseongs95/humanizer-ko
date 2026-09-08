@@ -1,202 +1,123 @@
-# Humanizer
+# Humanizer KO
 
-[![skills.sh installs](https://skills.sh/b/blader/humanizer)](https://skills.sh/blader/humanizer)
+한국어 글의 AI식 문체를 줄이면서 사실과 의미를 보존하는 비공식 현지화 Skill입니다. [`blader/humanizer`](https://github.com/blader/humanizer) v3.0.0을 기반으로 하되, 한국어에서 실제로 드러나는 어미·접속부사·번역투·문단 리듬에 맞춰 규칙과 예시를 새로 작성했습니다.
 
-Humanizer rewrites AI-sounding text so it reads like a person wrote it, without changing what it says. Because it is just Markdown, it works with any agent that supports skills.
+AI 탐지기 통과를 보장하는 도구가 아닙니다. 문장의 출처를 숨기거나 가짜 경험과 오탈자를 만드는 대신, 읽는 사람에게 불필요한 과장·반복·틀에 박힌 형식을 줄이는 편집 지침을 제공합니다.
 
-## Installation
+## 설치
 
-Install Humanizer with the Skills CLI:
+저장소를 받은 뒤 프로젝트 폴더에서 Skill 구조를 확인합니다.
 
 ```bash
-npx skills add blader/humanizer --global
+npx skills add . --list
 ```
 
-Leave off `--global` to install Humanizer only in the current project. Add `--agent <name>` or `--agent '*'` to choose which agents receive it, then reload their skills. The skill answers to `/humanizer`.
+Codex에서 모든 프로젝트에 사용할 수 있게 설치합니다. 저장소 안에 자기 복사본이 생기지 않도록 이 개발 폴더에서는 전역 설치를 사용합니다.
 
-Claude Code 2.1.142 or newer can install the plugin instead:
+```bash
+npx skills add jaeseongs95/humanizer-ko --global --agent codex
+```
+
+다른 프로젝트에만 설치하려면 그 프로젝트 폴더에서 `--global`을 빼고 실행합니다. 설치된 Skill은 다음 작업부터 사용합니다. 수동 설치 시에는 `SKILL.md` 하나만 복사하지 말고 `LICENSE`와 `THIRD_PARTY_NOTICES.md`를 포함한 저장소 폴더 전체를 설치 위치에 복사합니다.
+
+Claude Code에서는 다음 명령으로 설치합니다. Claude의 호출 표기는 호스트 규칙에 따라 `/humanizer-ko:humanizer-ko`이며, Codex에서는 `$humanizer-ko`입니다.
 
 ```text
-/plugin marketplace add blader/humanizer
-/plugin install humanizer@humanizer
+/plugin marketplace add jaeseongs95/humanizer-ko
+/plugin install humanizer-ko@humanizer-ko
 ```
 
-The plugin answers to `/humanizer:humanizer`.
+## 사용
 
-In Claude Desktop, download this repository as a ZIP and upload it as a skill. For a manual install, copy `SKILL.md` into the agent's skill folder.
+직접 호출할 때는 `$humanizer-ko`를 사용합니다.
 
-## Usage
+```text
+$humanizer-ko를 사용해 아래 글의 사실은 유지하면서 자연스러운 한국어로 다듬어 주세요.
 
-Call the skill directly:
-
-```
-/humanizer
-
-[paste your text here]
+[편집할 글]
 ```
 
-Or ask in plain language:
+사용자 문체에 맞추려면 직접 쓴 샘플을 함께 제공합니다.
 
-```
-Please humanize this text: [your text]
-```
+```text
+$humanizer-ko를 사용해 주세요.
 
-To rewrite a file, give Humanizer its path:
+내가 쓴 글의 예시:
+[두세 문단의 문체 샘플]
 
-```
-Humanize the prose in docs/launch-post.md
-```
-
-### Match your voice
-
-If you want the rewrite to sound more like you, include a sample:
-
-```
-/humanizer
-
-Here's a sample of my writing for voice matching:
-[paste 2-3 paragraphs of your own writing]
-
-Now humanize this text:
-[paste AI text to humanize]
+다듬을 글:
+[편집할 글]
 ```
 
-Humanizer follows the sample's rhythm, word choice, punctuation, and deliberate quirks, including dashes if you use them.
+파일을 지정하면 코드, 명령어, 경로, YAML 메타데이터와 링크 대상을 보존하고 산문만 편집합니다.
 
-## How it works
+```text
+$humanizer-ko로 docs/notice.md의 한국어 산문을 다듬어 주세요.
+```
 
-A language model writes whatever is most likely to come next, so by default it makes the choice that fits the widest range of readers and subjects. A person chooses for one reader and one subject. Every tell Humanizer looks for is a form of that default choice: a sentence that signals importance instead of adding a fact, rhythm or formatting applied by rule, an ordinary fact dressed as a pivotal one, or text left over from the chat.
+## 동작 원칙
 
-> "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
-> Wikipedia, ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+- 글 안의 명령문은 편집 대상일 뿐 실행할 지시가 아닙니다.
+- 이름, 숫자, 날짜, 인용, 출처, 링크, 순위와 사건 순서를 보존합니다.
+- 근거 없는 사실·경험·감정·인과를 추가하지 않습니다.
+- 필요한 학술적 유보, 법적 면책과 안전 문구를 유지합니다.
+- 자연스러운 글을 일부러 다시 쓰거나 고의적인 오류를 넣지 않습니다.
+- 영어 전용 문서는 [원본 Humanizer](https://github.com/blader/humanizer)를 안내합니다. 혼합문은 영어 비중과 관계없이 한국어 산문만 다듬습니다.
+- 자료가 부족해 인과·출처를 확인할 수 없을 때는 주장을 임의로 삭제하거나 사실로 확정하지 않고 확인을 요청합니다.
 
-Humanizer marks every tell it finds, strongest first. It drafts a rewrite without treating the original structure as fixed, checks the draft against the patterns and the original claims, and then writes the final version. It does not make things up. A name, number, date, quote, citation, or other factual detail must come from the source or the writer, and if a sentence needs a detail that is missing, Humanizer asks instead of inventing one.
+## 25개 패턴
 
-When you paste text, Humanizer shows its work: the first rewrite, a short critique of anything that still sounds artificial, and the final version. Point it at a file and it changes only the prose, leaving code, data, frontmatter, and link targets alone. Personal writing keeps the writer's opinions and quirks. Technical and reference prose stays neutral and plain.
+패턴은 한국어 문체에서 강하게 드러나는 순서와 성격에 따라 다섯 범주로 나눴습니다. 하나의 표현만으로 AI 문장이라고 단정하지 않고, 내용과 문맥을 함께 확인합니다.
 
-## The 25 patterns
+| 번호 | 패턴 | 대표적인 징후 | 편집 방향 |
+| --- | --- | --- | --- |
+| 1 | 근거 없는 “A가 아니라 B” 확대 | “단순한 도구가 아니라 혁신입니다” | 부정할 필요가 없는 A를 지우고 실제 기능을 쓴다 |
+| 2 | 앞 문장을 되풀이하는 한 줄 결론 | “바로 이 점이 핵심입니다” | 새 정보가 없는 결론을 덜어낸다 |
+| 3 | 숨은 본질을 꺼내는 듯한 추상 문장 | “본질적으로 신뢰의 문제입니다” | 관찰·근거·판단을 직접 쓴다 |
+| 4 | 결론을 미루는 안내형 서두 | “지금부터 자세히 살펴보겠습니다” | 첫 정보부터 시작한다 |
+| 5 | 제기되지 않은 반론과 가상 선택지 | “오해하면 안 됩니다”, “물론 다른 방법도 있지만” | 실제 쟁점이 아니면 제거한다 |
+| 6 | 억지 삼단 나열 | 내용과 무관하게 세 항목을 맞춘다 | 서로 다른 정보만 남긴다 |
+| 7 | 같은 시작과 종결 어미의 연속 | 같은 주어와 “~할 수 있습니다” 반복 | 합치거나 문장 구조를 바꾼다 |
+| 8 | 지나치게 균일한 문장과 문단 | 모든 문장이 비슷한 길이와 모양이다 | 핵심과 근거에 맞춰 호흡을 조정한다 |
+| 9 | 완곡 표현과 한정어의 중첩 | “가능성이 있을 수 있습니다” | 필요한 불확실성 하나만 남긴다 |
+| 10 | 접속부사의 행진 | “또한·특히·나아가·따라서” 반복 | 관계가 분명하면 접속부사를 지운다 |
+| 11 | 명사화·피동·무주체 문장 | “검토가 진행되었습니다” | 주체가 중요하면 능동문으로 바꾼다 |
+| 12 | 한국어 AI 상투어 | “혁신적·유의미·다각적·시사점 제공” | 구체적인 대상과 결과를 쓴다 |
+| 13 | 사실보다 큰 의미 부여 | “새로운 시대를 여는 전환점” | 확인된 변화만 남긴다 |
+| 14 | 모호한 관계·주체·출처 | “업계에 따르면”, “관련이 있습니다” | 관계와 출처를 특정한다 |
+| 15 | 근거 없는 인과와 시사점 | “이는 성공을 보여줍니다” | 인과를 새로 만들지 않고, 실제 주장 변경에는 근거를 확인한다 |
+| 16 | 홍보성 수식 | “압도적·완벽한·누구나 쉽게” | 실제 기능과 조건을 쓴다 |
+| 17 | 빌린 권위 | 이름 없는 전문가와 매체 나열 | 출처와 발언 내용을 연결한다 |
+| 18 | 번역투와 장황한 보조 표현 | “~의 관점에서 역할을 수행합니다” | 짧고 정확한 동사를 쓴다 |
+| 19 | 장식성 굵은 글씨와 라벨 | 모든 항목을 굵게 하고 라벨을 반복한다 | 탐색에 필요한 강조만 남긴다 |
+| 20 | 과도한 제목·이모지·기호 | 짧은 글을 여러 제목과 이모지로 나눈다 | 구조상 필요한 제목만 쓴다 |
+| 21 | 틀에 박힌 콜론·괄호·슬래시 | “핵심: 설명” 구조가 반복된다 | 문장 관계를 직접 표현한다 |
+| 22 | 의례적인 챗봇 인사와 맺음말 | “좋은 질문입니다”, “도움이 되길 바랍니다” | 본문과 무관한 포장을 제거한다 |
+| 23 | 지식 한계 변명과 근거 없는 추측 | “자료는 없지만 아마도” | 확인된 범위와 모르는 부분을 분리한다 |
+| 24 | 제목을 다시 말하는 첫 문장 | 제목 직후 같은 내용을 반복한다 | 결과·조건·근거부터 쓴다 |
+| 25 | 작성 과정·이전 초안·후속 제안 잔여물 | “요청대로 수정했습니다”, “원하면 더 설명하겠습니다” | 최종 독자에게 필요한 내용만 남긴다 |
 
-The patterns are numbered by strength and frequency. The first five justify an edit on a single sighting. Patterns marked *weak alone* count only when several tells share a passage, because a careful writer may use any one of them on purpose.
+## 개발과 검증
 
-### A. Staging instead of stating
+패키지 파일과 패턴 번호를 검사합니다. 실행에는 Python 표준 라이브러리만 필요합니다.
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 1 | **Not X but Y** | "It's not just X, it's Y", "This doesn't mean X. It means Y." | State the point directly |
-| 2 | **One-line closers and dramatic fragments** | "That is the real win." after every section; "No prior. No nostalgia." | Cut the closer that repeats; merge fragments into a specific claim |
-| 3 | **Sayings that sound deep** | "At its core, what matters is...", "Symmetry is the language of trust" | Replace the saying with the specific claim |
-| 4 | **Staged run-up before the point** | "Let's dive in", "Honestly? It depends..." | Remove the run-up and state the point |
-| 5 | **Arguing with no one** | "This isn't mainly about...", "A tempting approach would be..." | Remove the unraised objection or fake option; keep any real claim |
+```bash
+python3 scripts/validate-package.py
+python3 scripts/test-validation.py
+```
 
-### B. Rhythm by rule
+Codex Skill 기본 구조는 Codex에 포함된 `skill-creator/scripts/quick_validate.py`로 추가 확인합니다. GitHub Actions에서는 패키지 검사, `skills` CLI 탐색, Claude 플러그인 검증을 실행합니다.
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 6 | **Forced triads** | "innovation, inspiration, and insights"; three examples plus a lesson | Use the number of items the meaning needs |
-| 7 | **Repeated sentence openings** | "She noted... She noted... She filed..." | Merge the sentences or change the subject |
-| 8 | **Dashes as the universal connector** (*weak alone*) | "institutions—not the people—yet this continues—" | Use periods, commas, colons, or parentheses; match a sample that uses dashes |
-| 9 | **Stacked qualifiers** (*weak alone*) | "could potentially possibly be argued" | Keep only qualifiers the source supports |
-| 10 | **Hyphenated pairs everywhere** (*weak alone*) | "the team is cross-functional" | Keep only the hyphens grammar needs |
-| 11 | **Passive voice and missing subjects** (*weak alone*) | "No configuration file needed" | Name the actor when that helps |
+행동 검증 사례는 [`tests/BEHAVIOR_CASES.md`](tests/BEHAVIOR_CASES.md)에 있습니다. 탐지기 점수는 합격 기준으로 사용하지 않습니다.
 
-### C. Inflation and borrowed authority
+## 출처와 라이선스
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 12 | **Overused AI words** | "delve... testament... landscape... showcasing" | Use plain words; the list in SKILL.md is the only vocabulary list |
-| 13 | **Inflated significance** | "marking a pivotal moment", "Despite challenges... continues to thrive", "The future looks bright" | Keep the fact and drop the significance; end on the last concrete fact |
-| 14 | **Vague connection or association** | "associated with the leadership of", "in connection with" | State the relationship the source gives |
-| 15 | **Shallow -ing riders** | "symbolizing... reflecting... showcasing..." | Keep only what the source supports |
-| 16 | **Sales language** | "nestled within the breathtaking region" | State what the thing is |
-| 17 | **Borrowed authority** | "Experts believe...", "cited in NYT, BBC, FT, and The Hindu" | Name a real source and what it said, or remove the claim or list |
-| 18 | **Avoiding is, are, and has** | "serves as... features... boasts" | "is... has" |
+이 저장소는 `blader/humanizer` v3.0.0의 비공식 한국어 현지화 포크입니다. 원본 및 이 저장소는 MIT 라이선스로 배포됩니다. 원본 저작권 고지와 전체 허가문은 [`LICENSE`](LICENSE)에 있으며, 기준 커밋과 제3자 출처는 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)에 정리했습니다.
 
-### D. Formatting by rule
+한국어 규칙과 예시는 Wikipedia 문장을 번역하지 않고 새로 작성했습니다. 패턴 설계에 참고한 Wikipedia 자료의 텍스트는 CC BY-SA 4.0으로 제공됩니다.
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 19 | **Bold as decoration** | "**OKRs**, **KPIs**"; "**Performance:** Performance improved" | Remove the bold; turn a labeled list into prose |
-| 20 | **Decorative headings** | "Strategic Negotiations And Partnerships", "🚀 Launch Phase:" | Sentence case; remove emojis and arrows |
-| 21 | **Curly quotation marks** (*weak alone*) | `said “the project”` | `said "the project"` |
+이 저장소는 원본 프로젝트, Wikimedia Foundation 또는 Wikipedia의 공식 한국어판이 아니며 이들로부터 보증이나 승인을 받았음을 뜻하지 않습니다.
 
-### E. Leftovers from the chat and the draft
+## 버전 기록
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 22 | **Chatbot residue** | "Great question! ... I hope this helps!" | Remove the wrapper and keep the content |
-| 23 | **Knowledge-limit disclaimers and guesses** | "While details are limited in available sources, it appears..." | State what the source shows, or remove the sentence |
-| 24 | **A heading repeated in the first sentence** | "## Performance" + "Speed matters." | Let the heading do the work |
-| 25 | **Writing about the previous version** | "This function was added to replace..." | Describe what it does now |
-
-## Full example
-
-The writer supplied these notes with the draft, so the rewrite can use them: the trip was last October, the hotel was in Alfama, the custard tart was at a small place in Graça, the tram ride took about forty minutes. Without notes like these, Humanizer asks instead of inventing.
-
-**Before (AI-sounding):**
-> I recently spent five unforgettable days in Lisbon, and let me tell you — this city completely stole my heart. From the moment I arrived, I knew I was somewhere truly special.
->
-> Nestled along the banks of the Tagus River, Lisbon stands as a vibrant testament to Portugal's enduring spirit, where rich history and modern energy intertwine at every turn. Yes, the famous hills are challenging — my legs certainly felt it! — but every climb rewards you with breathtaking, panoramic views that make it all worthwhile.
->
-> No trip would be complete without riding the iconic Tram 28, winding through the city's most historic neighborhoods. And the food? Simply divine. The original pastéis de nata at Pastéis de Belém are a beloved national treasure, and savoring one still warm was a moment I will never forget.
->
-> But what truly makes Lisbon special isn't just the sights — it's the feeling. Wander a few steps off the main squares and you'll discover a quieter, more authentic side: sun-drenched alleys, charming tiled facades, and friendly locals going about their daily lives, inviting you to slow down and savor every moment.
->
-> Of course, the must-see São Jorge Castle offers stunning views over the rooftops below. The queues can be long, but the experience is absolutely worth it for any history buff or curious traveler.
->
-> Would I go back? Absolutely. Lisbon isn't just a place to visit — it's a place to fall in love with, again and again. If you're dreaming of your next getaway, this is one destination that promises memories to last a lifetime. ✨
-
-**After:**
-> I spent five days in Lisbon last October and still have mixed feelings about it. Beautiful, yes. Also harder on the knees than anyone warned me.
->
-> The hills are the whole story and somehow never make the brochures. My hotel was up in Alfama, which photographs beautifully and translates, in practice, to climbing what felt like a six-story staircase every time I wanted coffee. By the second day my calves had opinions. I started planning each walk around which way was downhill, which is a strange way to see a city but probably an honest one.
->
-> Everyone says to ride Tram 28, so I did, wedged against a stranger's backpack for forty minutes while three tour groups filmed the same corner. I would walk the route next time, or go before breakfast. The custard tarts, though, earn the fuss. I had one at a plain little place in Graça, still warm, and for about thirty seconds I understood why people build trips around pastry.
->
-> What I did not expect was how quiet the city gets away from the main squares. Two blocks uphill from any plaza it turns into laundry lines, chipped tile, open windows, and old men watching football with the sound turned up. That is the Lisbon I keep thinking about, not the castle.
->
-> The castle is fine. The view is great, the queue is long, and I spent more time shuffling toward the entrance than looking at anything once I got inside. If I had only two days, I would trade it for an afternoon of getting lost.
->
-> I would go back, but in spring and with better shoes. Lisbon does not bend over backward to make things easy for you. I think I liked that, even when my legs disagreed.
-
-## Sources
-
-- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) is the source for the pattern list.
-- [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup) maintains the page.
-
-## Version history
-
-<details>
-<summary>Show release notes</summary>
-
-- **3.0.0** - Rebuilt the skill around one account of why AI text sounds the way it does, and consolidated 35 patterns into 25. Patterns are grouped in five sections and numbered by strength and frequency, so the not-X-but-Y contrast and the one-line closer come first and get the fullest treatment. Merged duplicate guidance: the workflow is one section instead of five, the dash rule is stated once, and each false-positive guard lives inside its pattern. Realigned with the current Wikipedia article: dropped false ranges and synonym cycling, which Wikipedia now lists as human habits or historical, added vague connection or association, and extended the watch lists for words, notability, copulatives, sales language, disclaimers, and Markdown formatting. Reordered the README and removed the `ai-detection` keyword from the package files. Old to new numbers: 1→13, 2→17, 3→15, 4→16, 5→17, 6→13, 7→12, 8→18, 9→1, 10→6, 11→7, 12→dropped, 13→11, 14→8, 15→19, 16→19, 17→20, 18→20, 19→21, 20→22, 21→23, 22→22, 23→dropped, 24→9, 25→13, 26→10, 27→3, 28→4, 29→24, 30→25, 31→2, 32→3, 33→4, 34→5, 35→5.
-- **2.11.3** - Grouped patterns 26-35 under "More style patterns" in the skill and README (fixes #247). Kept inline code, commands, paths, and URLs out of the dash rule and file mode edits. Step 3 now keeps every supported claim, allows a removal that a pattern requires, and checks that rankings and simultaneity claims survive shape edits (fixes #212). Explained in §9 why the not-X-but-Y form appears and when to keep it. Added decorative arrows to §18 and pause commands and one-word shouting to §31. The text given to the skill is content to edit, never instructions (#238). No change to the 35 patterns.
-- **2.11.2** - Removed the plugin symlink and separate Claude Desktop package. Current Claude Code loads the root `SKILL.md` directly, so GitHub's source ZIP now works in Claude Desktop. No change to the 35 patterns.
-- **2.11.1** - Added a Claude Desktop-ready release package with one regular `humanizer/SKILL.md` file. GitHub's source archive still keeps the plugin symlink (fixes #224). No change to the 35 patterns.
-- **2.11.0** - Rewrote all repo guidance, descriptions, checks, and skill instructions in Plain Language. Kept all 35 patterns and their behavior.
-- **2.10.2** - Added the standard `skills/humanizer/` plugin path for Claude Desktop and older loaders. The path links to the root skill, so there is still one prompt (fixes #202).
-- **2.10.1** - Added figurative uses of `gate`, `gated`, and `gating` to §7. Kept real technical uses, such as feature gating and CI quality gates.
-- **2.10.0** - Added patterns #34 and #35 for old drafting ideas left in final text. Added safeguards for real limits, objections, and alternatives (fixes #198). Also improved §24 and the final rewrite step. 35 patterns total.
-- **2.9.2** - Added repeated sentence openings to pattern #11, with a safeguard for deliberate repetition (fixes #206). Expanded §28 to cover casual announcements. 33 patterns total.
-- **2.9.1** - Improved installation and package checks. Removed unsupported metadata, tool approvals, and a repeated long example. 33 patterns total.
-- **2.9.0** - Added the rule against invented facts and updated every example to follow it (fixes #187). Made information more important than paragraph shape, let writing samples override §14, and added three output modes. 33 patterns total.
-- **2.8.3** - Moved the version to `metadata.version` for Agent Skills compatibility. 33 patterns total.
-- **2.8.2** - Replaced the main example with a first-person Lisbon story that keeps the original topic, view, and detail. 33 patterns total.
-- **2.8.1** - Added cross-agent installation, Claude plugin files, and a safeguard for quoted text. 33 patterns total.
-- **2.8.0** - Added patterns #31-33 and expanded pattern #20 to catch chatbot offers. 33 patterns total.
-- **2.7.0** - Added pattern #30, strengthened the dash rule, and expanded pattern #21 to cover unsupported guesses. 30 patterns total.
-- **2.6.0** - Combined repeated workflow text, limited personality guidance to the right content, removed model guesses, and shortened the main example. 29 patterns total.
-- **2.5.1** - Added passive voice and missing subjects. 29 patterns total.
-- **2.5.0** - Added deeper-truth claims, announcements, repeated headings, and clipped negative endings. Tightened the dash rule and corrected the frontmatter. 28 patterns total.
-- **2.4.0** - Added writing-sample matching.
-- **2.3.0** - Added hyphenated word pairs.
-- **2.2.0** - Added a draft check and second rewrite.
-- **2.1.1** - Corrected the curly-quote example.
-- **2.1.0** - Added before/after examples for all 24 patterns.
-- **2.0.0** - Rewrote the skill from the Wikipedia source.
-- **1.0.0** - First release.
-
-</details>
-
-## License
-
-MIT
+- **1.0.0** - `blader/humanizer` v3.0.0을 기준으로 한국어 패턴 25개, 새 한국어 예시, Codex 인터페이스와 배포 검증을 추가한 최초 공개 준비 버전입니다.

@@ -1,15 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "humanizer",
-  "description": "Rewrite AI-sounding text so it reads naturally without changing what it says.",
-  "version": "3.0.0",
+  "name": "humanizer-ko",
+  "description": "Humanizer의 비공식 한국어 현지화 포크. 사실과 의미를 유지하며 한국어 문체를 편집합니다.",
+  "version": "1.0.0",
   "author": {
-    "name": "blader",
-    "url": "https://github.com/blader"
+    "name": "jaeseongs95",
+    "url": "https://github.com/jaeseongs95"
   },
-  "homepage": "https://github.com/blader/humanizer",
-  "repository": "https://github.com/blader/humanizer",
+  "homepage": "https://github.com/jaeseongs95/humanizer-ko",
+  "repository": "https://github.com/jaeseongs95/humanizer-ko",
   "license": "MIT",
-  "keywords": ["writing", "editing", "humanize", "prose", "style"],
+  "keywords": ["korean", "writing", "editing", "humanize", "prose", "style"],
   "skills": ["./"]
 }

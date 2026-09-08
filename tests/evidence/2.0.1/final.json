@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 3,
+  "artifactKind": "behavior-execution",
+  "suiteId": "humanizer-ko/2.0.1",
+  "bindings": {
+    "skill": {
+      "path": "skills/humanizer-ko/SKILL.md",
+      "sha256": "42198a9ee68e3919662458aa1dca38b8e79eae45610a0fae9e944564c938ae7f"
+    },
+    "caseSet": {
+      "path": "tests/cases/2.0.1.json",
+      "sha256": "29a74a710d7d5a411fbe9f3b6a348bcfa2725462479a48d3a44e86233a2556c4"
+    },
+    "protocol": {
+      "path": "tests/EVALUATION_PROTOCOL.md",
+      "sha256": "4df9ba59e3d04b301b10d31664e0fb29c2c6d8565331b5471a66687eb203d539"
+    }
+  },
+  "execution": {
+    "runId": "forward-20260909-02-repair-01",
+    "agent": "/root/forward_runner_3",
+    "model": "withheld",
+    "reasoning": "withheld"
+  },
+  "outputs": {
+    "R01": "설정 내용과 적용 방식을 확인할 수 없어, 이 설정이 맞는지와 저장 후 다음 작업부터 적용되는지는 판단할 수 없어.",
+    "R02": "운영팀께,\n\n배포일은 2026년 9월 12일이며, 점검 시간은 14:00~15:00입니다. 담당자는 김민수입니다. 운영 문서는 https://example.com/runbook 에 있습니다.",
+    "R03": "운영팀은 “오류 2건을 확인했다”고 보고했습니다. 점검 명령은 `check --dry-run`입니다. 자세한 절차는 https://example.com/runbook?mode=test&step=2 에 있습니다.",
+    "R04": "This release keeps the Retry-After header unchanged. 이번 변경은 업데이트입니다. timeout은 45초로 설정합니다. The rollback command is `deploy --rollback`.",
+    "T01": "1.0 수용 기준은 1.0 출시 여부를 판정한다. Engine 설치 명세에는 wheel에 포함할 파일, 필수 의존성, 지원할 스키마 버전 범위를 적는다.",
+    "T02": "시공사는 발주처와 설치 공사 계약을 체결했다. SDK는 기존 API 계약을 유지한다.",
+    "T03": "문서에는 “설치 계약은 2026년 9월 12일까지 유효하다”라고 적혀 있다. 원장의 필드명은 `intent`와 `receipt`다.",
+    "T04": "운영 계약을 활성화한다.\n\n‘운영 계약’의 정의가 필요해 해당 표현은 확정하지 않았습니다.",
+    "T05": "현재 기준 구현은 `runner.py`이며, 문서와 동작이 다르면 `runner.py`를 기준으로 삼는다. 허용되는 외부 작업은 `issue` 생성과 `label` 변경뿐이다. schema 경계는 v2까지다. 작업 상태는 `observe`로 관측한다. 연구팀은 약물 효과를 비교했고, 운영팀은 저장소 접근 권한을 검토했다.\n\n‘schema 경계’의 정의가 필요해 해당 표현은 확정하지 않았습니다.",
+    "T06": "사용자 요청을 `Goal Contract`로 정규화한다. 사용자는 목표·범위·`허용 효과`·운영 정책을 승인한다. 세부 기준은 [1.0 계약](docs/redesign-1.0-contract.md)에 정의되어 있다.\n\n명칭을 변경하려면 용어집, 표제, 본문 참조와 링크 라벨을 함께 검토해야 한다.",
+    "T07": "다음 단계에서는 운영 계약을 활성화하고 권위 상태를 갱신한 뒤 실행 경계를 승인한다.\n\n‘운영 계약’, ‘권위 상태’, ‘실행 경계’의 정의가 필요해 해당 표현은 확정하지 않았습니다."
+  }
+}

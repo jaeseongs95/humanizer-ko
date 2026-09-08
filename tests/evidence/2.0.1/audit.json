@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 2,
+  "artifactKind": "behavior-audit",
+  "suiteId": "humanizer-ko/2.0.1",
+  "bindings": {
+    "evidencePath": "tests/evidence/2.0.1/final.json",
+    "evidenceSha256": "c753a988cc663d73e40971ecb798474991dbfc94b1745f0b34d47aab75058aa2",
+    "skillSha256": "42198a9ee68e3919662458aa1dca38b8e79eae45610a0fae9e944564c938ae7f",
+    "caseSetSha256": "29a74a710d7d5a411fbe9f3b6a348bcfa2725462479a48d3a44e86233a2556c4",
+    "protocolSha256": "4df9ba59e3d04b301b10d31664e0fb29c2c6d8565331b5471a66687eb203d539"
+  },
+  "auditor": {
+    "agent": "/root/forward_auditor_3",
+    "model": "withheld",
+    "reasoning": "withheld"
+  },
+  "results": {
+    "R01": {
+      "criteriaId": "R01",
+      "outputSha256": "d3cee76cb796d1f8b2d4f70e4d0d98eecaf4951231cd347d5eb378efdf2ae9e5",
+      "dimensions": {"meaningPreservation": "notApplicable", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "notApplicable"},
+      "result": "pass",
+      "reason": "확인할 설정 정보가 없다는 한계를 짧고 자연스럽게 답했으며, Skill 사용 안내나 편집 절차를 노출하지 않았다."
+    },
+    "R02": {
+      "criteriaId": "R02",
+      "outputSha256": "1b568ae731c890ffb661762c98463dc6efdef4c8af13c43c0d9511745ae59834",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "notApplicable"},
+      "result": "pass",
+      "reason": "배포일, 점검 시간, 담당자, 운영 문서 URL과 각 정보의 역할을 모두 유지했다. 근거 없는 배포 사유나 상태를 보태지 않고 완성형 메일 본문만 반환했다."
+    },
+    "R03": {
+      "criteriaId": "R03",
+      "outputSha256": "d6d04846679cf073bc1907a2377dd15f7bc2dcedbced1dcd1e08071195788653",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "notApplicable"},
+      "result": "pass",
+      "reason": "운영팀의 보고 행위, 오류 2건, 직접 인용, 점검 명령과 URL을 그대로 보존했다. 의례적인 인사·서두·맺음말과 불필요한 접속부사만 덜어 공지를 자연스럽게 다듬었다."
+    },
+    "R04": {
+      "criteriaId": "R04",
+      "outputSha256": "ef41362b7088e2f149da102c1b4ab882d5e19998d023141880453d58f9dab7b4",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "notApplicable"},
+      "result": "pass",
+      "reason": "두 영어 문장, `timeout`, 45초, `deploy --rollback`을 그대로 유지했다. 한국어 문장의 근거 없는 과장과 홍보성 수식을 줄이면서 변경이 업데이트라는 기본 명제는 보존했다."
+    },
+    "T01": {
+      "criteriaId": "T01",
+      "outputSha256": "dfab8f4483bca046e478f05e1d6d1fd84f8234e5c4e1075c88840adaa50db4a6",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass"},
+      "result": "pass",
+      "reason": "임시 표현인 `1.0 계약`을 출시 여부를 판정하는 `1.0 수용 기준`으로, `Engine 설치 계약`을 `Engine 설치 명세`로 문맥에 맞게 고쳤다. 버전, wheel 포함 파일, 필수 의존성, 스키마 버전 범위는 모두 유지했고 배경 설명은 되풀이하지 않았다."
+    },
+    "T02": {
+      "criteriaId": "T02",
+      "outputSha256": "92c8fe79b26a3ae65433db713ea2d84da6ba4e8d22d447cd8cd866639d8f0836",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass"},
+      "result": "pass",
+      "reason": "법률 용례인 `설치 공사 계약`과 기술 용례인 `API 계약`을 그대로 두었다. 계약 당사자와 체결 행위, SDK의 기존 API 호환 관계도 유지했으며 원문 자체가 자연스러워 불필요하게 바꾸지 않았다."
+    },
+    "T03": {
+      "criteriaId": "T03",
+      "outputSha256": "821c5e45ce5731a29bb01bb9c63507980f98aa18ac19b214e05fa469b07c07ca",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass"},
+      "result": "pass",
+      "reason": "직접 인용 “설치 계약은 2026년 9월 12일까지 유효하다”와 식별자 `intent`, `receipt`를 문자 그대로 보존했다. 바깥 산문만 `원장의 필드명`으로 자연스럽게 다듬었다."
+    },
+    "T04": {
+      "criteriaId": "T04",
+      "outputSha256": "142a2890ca2d71684059c2758b44900f91f2905851323f12eec6ebffcd527e8d",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass"},
+      "result": "pass",
+      "reason": "뜻을 확정할 수 없는 `운영 계약`을 임의로 기준·명세·규칙 등으로 바꾸지 않고 원문 표현을 유지했다. 정의가 필요하다고 밝히며 해당 표현의 최종 확정을 보류했다."
+    },
+    "T05": {
+      "criteriaId": "T05",
+      "outputSha256": "8670f84cbc86dcd021022b2b6cdb8c2b41694a6aa5f4a49528e4d7688a5a2048",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass"},
+      "result": "pass",
+      "reason": "임시 직역 표현인 `현재 권위 구현`은 문서와 충돌할 때 기준이 되는 구현이라는 기능에 맞춰 `현재 기준 구현`으로, `허용 효과`는 `허용되는 외부 작업`으로 고쳤다. `runner.py`, `issue`, `label`, `observe`, v2, 약물 효과와 접근 권한은 보존했으며, 불명확한 `schema 경계`는 그대로 두고 정의를 요청했다."
+    },
+    "T06": {
+      "criteriaId": "T06",
+      "outputSha256": "265a45d61e5e068dede79a19fc83973e4fac3a800efb2c1554a6c67394e84c1c",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass"},
+      "result": "pass",
+      "reason": "고정 명칭 `Goal Contract`, 고정 용어 `허용 효과`, Markdown 링크의 라벨과 href를 모두 그대로 유지했다. 명칭을 바꾸려면 용어집·표제·본문 참조·링크 라벨을 함께 검토해야 한다고 안내해 일부만 조용히 개명하지 않았다."
+    },
+    "T07": {
+      "criteriaId": "T07",
+      "outputSha256": "7a67fca995abc05107605f80c9bcdec252f4bb51917ecea42947568820f5587e",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass"},
+      "result": "pass",
+      "reason": "`운영 계약`, `권위 상태`, `실행 경계`와 활성화·갱신·승인의 순서를 그대로 보존했다. 세 표현을 근거 없이 해석하지 않고 정의가 필요하다고 밝혀 최종 확정을 보류했다."
+    }
+  },
+  "overall": "pass",
+  "limitations": [
+    "지정된 네 파일만 읽어 판정했으며 다른 evidence, 기존 audit, 작업 대화와 과거 결론은 참조하지 않았다.",
+    "실행 과정이나 전체 Skill 미호출 여부는 산출물에 드러난 내용으로만 판정했다."
+  ]
+}

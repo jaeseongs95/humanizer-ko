@@ -2,6 +2,7 @@
 """정상 패키지와 손상된 배포 파일·행동 기록에 대한 검증기의 동작을 확인한다."""
 
 from pathlib import Path
+import hashlib
 import json
 import shutil
 import subprocess
@@ -32,11 +33,60 @@ class PackageValidationTests(unittest.TestCase):
             capture_output=True, text=True, encoding="utf-8",
         )
 
-    def run_behavior_validator(self):
+    def run_behavior_validator(self, evidence=None):
+        command = [
+            sys.executable, "-X", "utf8",
+            str(self.root / "scripts/check-behavior-artifacts.py"),
+        ]
+        if evidence is not None:
+            command.append(str(self.root / evidence))
         return subprocess.run(
-            [sys.executable, "-X", "utf8", str(self.root / "scripts/check-behavior-artifacts.py")],
+            command,
             cwd=self.root, capture_output=True, text=True, encoding="utf-8",
         )
+
+    @staticmethod
+    def content_hash(path):
+        text = path.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+    def read_json(self, relative):
+        path = self.root / relative
+        return path, json.loads(path.read_text(encoding="utf-8"))
+
+    @staticmethod
+    def write_json(path, document):
+        path.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n",
+                        encoding="utf-8")
+
+    def rebind_audit_to_evidence(self, case_id=None):
+        evidence_path = self.root / "tests/evidence/2.0.1/final.json"
+        audit_path, audit = self.read_json("tests/evidence/2.0.1/audit.json")
+        audit["bindings"]["evidenceSha256"] = self.content_hash(evidence_path)
+        if case_id is not None:
+            evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+            output = evidence["outputs"][case_id].replace("\r\n", "\n").replace("\r", "\n")
+            audit["results"][case_id]["outputSha256"] = hashlib.sha256(
+                output.encode("utf-8")
+            ).hexdigest()
+        self.write_json(audit_path, audit)
+
+    def rebind_case_set(self):
+        case_path = self.root / "tests/cases/2.0.1.json"
+        case_hash = self.content_hash(case_path)
+        evidence_path, evidence = self.read_json("tests/evidence/2.0.1/final.json")
+        evidence["bindings"]["caseSet"]["sha256"] = case_hash
+        self.write_json(evidence_path, evidence)
+        audit_path, audit = self.read_json("tests/evidence/2.0.1/audit.json")
+        audit["bindings"]["caseSetSha256"] = case_hash
+        audit["bindings"]["evidenceSha256"] = self.content_hash(evidence_path)
+        self.write_json(audit_path, audit)
+
+    def assert_behavior_rejected(self, diagnostic):
+        result = self.run_behavior_validator()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(diagnostic, result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
 
     def replace(self, filename, old, new):
         path = self.root / filename
@@ -71,16 +121,113 @@ class PackageValidationTests(unittest.TestCase):
         self.replace("skills/humanizer-ko/THIRD_PARTY_NOTICES.md", "비공식", "공식")
         self.assert_rejected("독립형 Skill의 THIRD_PARTY_NOTICES.md")
 
-    def test_behavior_url_suffix_rejected(self):
-        evidence_path = self.root / "tests" / "evidence" / "2.0.0" / "final.json"
-        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
-        evidence["outputs"]["R02"] = evidence["outputs"]["R02"].replace(
-            "https://example.com/runbook", "https://example.com/runbook-malformed",
-        )
-        evidence_path.write_text(json.dumps(evidence, ensure_ascii=False), encoding="utf-8")
+    def test_valid_behavior_artifacts(self):
         result = self.run_behavior_validator()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("URL 불일치", result.stderr)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_explicit_schema2_checks_internal_protection_with_limitation(self):
+        result = self.run_behavior_validator("tests/evidence/2.0.0/final.json")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("현재 Skill", result.stdout)
+        self.assertIn("검증할 수 없습니다", result.stdout)
+
+    def test_skill_canonical_tamper_rejected(self):
+        self.replace("skills/humanizer-ko/SKILL.md", "## 작업 순서", "## 작업 절차")
+        self.assert_behavior_rejected("bindings.skill")
+
+    def test_case_set_canonical_tamper_rejected(self):
+        path = self.root / "tests/cases/2.0.1.json"
+        path.write_text(path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+        self.assert_behavior_rejected("bindings.caseSet")
+
+    def test_missing_case_request_rejected(self):
+        case_path, case_set = self.read_json("tests/cases/2.0.1.json")
+        case_set["cases"][0].pop("request")
+        self.write_json(case_path, case_set)
+        self.assert_behavior_rejected("R01.request")
+
+    def test_request_protection_tokens_are_not_required_in_output(self):
+        case_path, case_set = self.read_json("tests/cases/2.0.1.json")
+        marker = "메타 지시의 “복사 금지”와 `request-only` 및 https://meta.invalid 값"
+        case_set["cases"][0]["request"] += " " + marker
+        self.assertNotIn(marker, case_set["cases"][0]["input"])
+        self.write_json(case_path, case_set)
+        _, evidence = self.read_json("tests/evidence/2.0.1/final.json")
+        self.assertNotIn(marker, evidence["outputs"]["R01"])
+        self.rebind_case_set()
+        result = self.run_behavior_validator()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_protocol_canonical_tamper_rejected(self):
+        path = self.root / "tests/EVALUATION_PROTOCOL.md"
+        path.write_text(path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+        self.assert_behavior_rejected("bindings.protocol")
+
+    def test_output_tamper_rejected(self):
+        evidence_path, evidence = self.read_json("tests/evidence/2.0.1/final.json")
+        evidence["outputs"]["R01"] += " 변조"
+        self.write_json(evidence_path, evidence)
+        self.assert_behavior_rejected("evidenceSha256")
+
+    def test_audit_output_hash_tamper_rejected(self):
+        audit_path, audit = self.read_json("tests/evidence/2.0.1/audit.json")
+        audit["results"]["R01"]["outputSha256"] = "0" * 64
+        self.write_json(audit_path, audit)
+        self.assert_behavior_rejected("outputSha256")
+
+    def test_missing_case_output_rejected(self):
+        evidence_path, evidence = self.read_json("tests/evidence/2.0.1/final.json")
+        evidence["outputs"].pop("T07")
+        self.write_json(evidence_path, evidence)
+        self.rebind_audit_to_evidence()
+        self.assert_behavior_rejected("실행 기록 사례 ID 불일치")
+
+    def test_protected_literal_deletion_rejected(self):
+        cases_path, case_set = self.read_json("tests/cases/2.0.1.json")
+        target = next(case for case in case_set["cases"] if case["protection"]["literals"])
+        case_id = target["id"]
+        literal = target["protection"]["literals"][0]
+        evidence_path, evidence = self.read_json("tests/evidence/2.0.1/final.json")
+        self.assertIn(literal, evidence["outputs"][case_id])
+        evidence["outputs"][case_id] = evidence["outputs"][case_id].replace(literal, "", 1)
+        self.write_json(evidence_path, evidence)
+        self.rebind_audit_to_evidence(case_id)
+        self.assert_behavior_rejected("보호 literal 출현 횟수 불일치")
+
+    def test_protected_literal_duplication_rejected(self):
+        cases_path, case_set = self.read_json("tests/cases/2.0.1.json")
+        target = next(case for case in case_set["cases"] if case["protection"]["literals"])
+        case_id = target["id"]
+        literal = target["protection"]["literals"][0]
+        evidence_path, evidence = self.read_json("tests/evidence/2.0.1/final.json")
+        evidence["outputs"][case_id] += " " + literal
+        self.write_json(evidence_path, evidence)
+        self.rebind_audit_to_evidence(case_id)
+        self.assert_behavior_rejected("보호 literal 출현 횟수 불일치")
+
+    def test_same_executor_and_auditor_rejected(self):
+        evidence_path, evidence = self.read_json("tests/evidence/2.0.1/final.json")
+        audit_path, audit = self.read_json("tests/evidence/2.0.1/audit.json")
+        evidence["execution"]["agent"] = audit["auditor"]["agent"]
+        self.write_json(evidence_path, evidence)
+        self.rebind_audit_to_evidence()
+        self.assert_behavior_rejected("실행자와 감사자")
+
+    def test_failed_case_with_passing_overall_rejected(self):
+        audit_path, audit = self.read_json("tests/evidence/2.0.1/audit.json")
+        result = audit["results"]["R01"]
+        first_dimension = next(iter(result["dimensions"]))
+        result["dimensions"][first_dimension] = "fail"
+        result["result"] = "fail"
+        audit["overall"] = "pass"
+        self.write_json(audit_path, audit)
+        self.assert_behavior_rejected("overall")
+
+    def test_missing_audit_dimension_rejected(self):
+        audit_path, audit = self.read_json("tests/evidence/2.0.1/audit.json")
+        audit["results"]["R01"]["dimensions"].pop("terminologyJudgment")
+        self.write_json(audit_path, audit)
+        self.assert_behavior_rejected("dimensions 이름 불일치")
 
     def test_claude_plugin_version_mismatch(self):
         path = self.root / ".claude-plugin/plugin.json"

@@ -8,6 +8,7 @@
 - `README.md`는 설치, 사용법, 25개 패턴과 버전 기록을 설명합니다.
 - `THIRD_PARTY_NOTICES.md`는 원본 프로젝트와 Wikipedia 자료의 출처 및 변경 사실을 기록합니다.
 - `agents/openai.yaml`은 OpenAI 호환 UI의 이름과 기본 프롬프트를 정의합니다.
+- `examples/AGENTS.humanizer-ko.md`는 일반 답변과 한국어 산문 작업을 구분하는 선택적 Codex 전역 지침 예시입니다.
 - `.claude-plugin/`은 Claude 플러그인과 marketplace 메타데이터를 제공합니다.
 - `scripts/validate-package.py`는 공유 식별자, 버전, 패턴 번호와 라이선스 고지를 검사합니다.
 - `scripts/check-behavior-artifacts.py`는 기록된 출력에서 코드·인용·URL·서식의 문자 보존을 확인합니다. 의미·자연스러움은 판정하지 않습니다.

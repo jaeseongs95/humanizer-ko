@@ -2,3 +2,6 @@ interface:
   display_name: "Humanizer KO"
   short_description: "사실을 유지하며 AI식 한국어 문체를 자연스럽게 편집"
   default_prompt: "$humanizer-ko를 사용해 이 글의 사실은 유지하면서 자연스러운 한국어로 다듬어 주세요."
+
+policy:
+  allow_implicit_invocation: true

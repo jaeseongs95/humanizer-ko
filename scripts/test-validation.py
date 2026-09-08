@@ -19,7 +19,7 @@ class PackageValidationTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         for name in ("SKILL.md", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md",
-                     "agents", ".claude-plugin", "scripts", "tests"):
+                     "agents", "examples", ".claude-plugin", "scripts", "tests"):
             source, dest = ROOT / name, self.root / name
             if source.is_dir():
                 shutil.copytree(source, dest, ignore=shutil.ignore_patterns("__pycache__"))
@@ -71,6 +71,15 @@ class PackageValidationTests(unittest.TestCase):
     def test_wrong_prompt(self):
         self.replace("agents/openai.yaml", "$humanizer-ko", "$humanizer")
         self.assert_rejected("기본 프롬프트")
+
+    def test_implicit_invocation_disabled(self):
+        self.replace("agents/openai.yaml", "allow_implicit_invocation: true",
+                     "allow_implicit_invocation: false")
+        self.assert_rejected("자동 Skill 선택")
+
+    def test_missing_global_instructions(self):
+        (self.root / "examples" / "AGENTS.humanizer-ko.md").unlink()
+        self.assert_rejected("AGENTS.humanizer-ko.md")
 
     def test_duplicate_skill(self):
         duplicate = self.root / "nested"

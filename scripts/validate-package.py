@@ -44,6 +44,7 @@ README = read_package_file(ROOT / "README.md")
 LICENSE = read_package_file(ROOT / "LICENSE")
 NOTICES = read_package_file(ROOT / "THIRD_PARTY_NOTICES.md")
 OPENAI = read_package_file(ROOT / "agents" / "openai.yaml")
+GLOBAL_INSTRUCTIONS = read_package_file(ROOT / "examples" / "AGENTS.humanizer-ko.md")
 PLUGIN = read_json(ROOT / ".claude-plugin" / "plugin.json")
 MARKETPLACE = read_json(ROOT / ".claude-plugin" / "marketplace.json")
 
@@ -142,8 +143,8 @@ default_prompt = require_match(
 ).group(1)
 if default_prompt != "$humanizer-ko를 사용해 이 글의 사실은 유지하면서 자연스러운 한국어로 다듬어 주세요.":
     raise SystemExit("OpenAI 기본 프롬프트를 한국어판 호출 문구와 일치시키세요.")
-if re.search(r"(?m)^\s+allow_implicit_invocation:\s*false\s*$", OPENAI):
-    raise SystemExit("한국어판의 자동 Skill 선택을 유지하세요.")
+if not re.search(r"(?m)^\s+allow_implicit_invocation:\s*true\s*$", OPENAI):
+    raise SystemExit("한국어판의 자동 Skill 선택을 true로 유지하세요.")
 
 short_description = require_match(
     re.search(r'(?m)^\s+short_description:\s*"([^"]+)"\s*$', OPENAI),
@@ -151,6 +152,19 @@ short_description = require_match(
 ).group(1)
 if not 25 <= len(short_description) <= 64:
     raise SystemExit("OpenAI short_description은 25~64자여야 합니다.")
+
+global_instruction_requirements = (
+    "## 기본 한국어 문체",
+    "## 한국어 산문 작성·편집의 스킬 적용",
+    "README·메일·보고서·안내문",
+    "`humanizer-ko` 스킬을 읽고 사용한다",
+    "스킬 파일을 읽기 전에",
+    "연도·월·일·시각",
+    "영어 전용 작업에는 한국어 편집을 적용하지 않는다",
+)
+for required_text in global_instruction_requirements:
+    if required_text not in GLOBAL_INSTRUCTIONS:
+        raise SystemExit(f"전역 적용 예시에 필수 규칙을 추가하세요: {required_text}")
 
 license_requirements = ("MIT License", "Copyright (c) 2025 Siqi Chen")
 for required_text in license_requirements:

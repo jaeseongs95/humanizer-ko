@@ -27,6 +27,20 @@ Claude Code에서는 다음 명령으로 설치합니다. Claude의 호출 표�
 /plugin install humanizer-ko@humanizer-ko
 ```
 
+## 평소 답변에도 적용
+
+Skill 자체의 자동 선택은 허용되어 있지만, 실제 호출 여부는 요청과 `description`의 일치 여부에 따라 달라집니다. 일반 답변에는 간단한 문체 원칙만 적용하고 README·메일·보고서·안내문 등 한국어 산문을 작성하거나 편집할 때 전체 Skill을 사용하려면 [`examples/AGENTS.humanizer-ko.md`](examples/AGENTS.humanizer-ko.md)의 두 섹션을 Codex 전역 `AGENTS.md`에 추가합니다.
+
+기본 위치는 `~/.codex/AGENTS.md`이고, `CODEX_HOME`을 따로 지정했다면 그 디렉터리의 `AGENTS.md`를 사용합니다. 기존 전역 지침을 파일 전체로 덮어쓰지 말고 예시의 두 섹션만 병합합니다. 같은 위치에 비어 있지 않은 `AGENTS.override.md`가 있으면 이 파일이 `AGENTS.md`보다 우선합니다.
+
+Codex는 실행이나 TUI 세션을 시작할 때 지침을 읽으므로, 변경 후 새 작업을 시작합니다. 다음 명령으로 적용된 지침을 확인할 수 있습니다.
+
+```bash
+codex --ask-for-approval never "현재 적용 중인 전역 문체 지침과 humanizer-ko 호출 조건을 요약해 주세요."
+```
+
+이 설정은 일반 질문·진행 상황·짧은 확인에는 기본 문체만 적용하고, 한국어 산문 산출물과 문체 교정에는 `humanizer-ko`를 사용합니다. 영어 전용 작업과 코드·명령어·URL·직접 인용·구조화 데이터는 편집 대상에서 제외합니다.
+
 ## 사용
 
 직접 호출할 때는 `$humanizer-ko`를 사용합니다.

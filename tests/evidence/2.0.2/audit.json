@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 2,
+  "artifactKind": "behavior-audit",
+  "suiteId": "humanizer-ko/2.0.2",
+  "bindings": {
+    "evidencePath": "tests/evidence/2.0.2/final.json",
+    "evidenceSha256": "f3d945cd2e124f8455f6ec6b825245e5322ed0b52663110dde2a8cf5d746fc07",
+    "skillSha256": "8fcde9b9e8182ab06e442f6acdbfd6a26cca64fb90b7e1095e7604c87592902a",
+    "readmeSha256": "1f5def1f6fa3bbcf1c05f5f3b246266551eb865d7bfc1b7cd9fc24f5162a94f4",
+    "behaviorCasesSha256": "753b285fdb830f884674d803bd2851bd8c3e5c117781e5c4122bb2ac2c7ef624",
+    "caseSetSha256": "22f29b760d9bfa28cf33bd3edcfab717a808f5e7f0e5bb8e23f50c2761a00112",
+    "protocolSha256": "00cb4ff8cd9d59631770c4bb222a0fa7ca5111693385722c9e3de5482c383cab",
+    "freezeSha256": "72937bce4ec5bae0b815c4f13340259a27ee6772c7dcc25eb3a53e1fa431d7aa"
+  },
+  "auditor": {
+    "agent": "/root/generalization_auditor/fresh_behavior_auditor_202",
+    "model": "withheld",
+    "reasoning": "withheld",
+    "completedAt": "2026-09-09T22:28:56.7396367+09:00"
+  },
+  "results": {
+    "R01": {
+      "criteriaId": "R01", "outputSha256": "2aca10322581615a3b6fcece6e165eefa45ffc26a22afebcd152161f50e0782b",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "확인할 수 없는 설정 상태를 단정하지 않고 필요한 맥락을 짧게 요청했으며, Skill 사용 안내나 편집 절차를 노출하지 않았다."
+    },
+    "R02": {
+      "criteriaId": "R02", "outputSha256": "9c3e9c370f1a22a3fca42977dd70b8eefb6b88a60708019d06bff106957d5369",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "배포일, 점검 시간, 담당자와 URL의 역할을 모두 유지했고 근거 없는 배포 사유나 운영 사실을 추가하지 않은 완성형 메일만 반환했다."
+    },
+    "R03": {
+      "criteriaId": "R03", "outputSha256": "d6d04846679cf073bc1907a2377dd15f7bc2dcedbced1dcd1e08071195788653",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "의례적 인사·예고·맺음말만 덜어내고 운영팀의 보고 행위, 오류 2건의 직접 인용, 명령어와 URL을 문자 그대로 보존했다."
+    },
+    "R04": {
+      "criteriaId": "R04", "outputSha256": "ef41362b7088e2f149da102c1b4ab882d5e19998d023141880453d58f9dab7b4",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "두 영어 문장, Retry-After, timeout, 45초와 rollback 명령을 그대로 두고 한국어의 근거 없는 대비·혁신 수식만 제거해 업데이트라는 최소 분류를 남겼다."
+    },
+    "T01": {
+      "criteriaId": "T01", "outputSha256": "807dd2ec0439670410f3f399b338863c359c882d6c5f728a0dfade9535f9b91b",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "고정명이 아닌 두 ‘계약’을 각각 1.0 출시 수용 기준과 Engine 설치 조건으로 풀었고 wheel 포함 파일, 필수 의존성, 지원 스키마 버전 범위를 유지했다. 배경 설명도 되풀이하지 않았다."
+    },
+    "T02": {
+      "criteriaId": "T02", "outputSha256": "92c8fe79b26a3ae65433db713ea2d84da6ba4e8d22d447cd8cd866639d8f0836",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "법률 용례인 설치 공사 계약과 기술 용례인 API 계약을 과잉 수정하지 않았고 계약 당사자·체결 행위와 SDK의 호환 관계를 유지했다."
+    },
+    "T03": {
+      "criteriaId": "T03", "outputSha256": "821c5e45ce5731a29bb01bb9c63507980f98aa18ac19b214e05fa469b07c07ca",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "직접 인용 전체와 날짜를 그대로 유지하고 `intent`, `receipt`를 번역·개명하지 않았으며 바깥 산문만 자연스럽게 고쳤다."
+    },
+    "T04": {
+      "criteriaId": "T04", "outputSha256": "7c0faacb88ddf3e6fe09888c155505652cd6a618a0848118b8b05aa68d594686",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "뜻이 불명확한 ‘운영 계약’을 임의 치환하지 않고 원문을 보존한 뒤 그 표현의 지시 대상을 확인해 달라고 요청했다."
+    },
+    "T05": {
+      "criteriaId": "T05", "outputSha256": "f76c6074f1295c5017458d0be5ccc3a53fdd03fcfde8c34854a98ac8d188e3e9",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "임시 일반 설명인 ‘현재 권위 구현’과 ‘허용 효과’를 확인된 기능에 맞게 풀고 모든 코드 식별자, v2, 약물 효과와 접근 권한을 보존했다. ‘schema 경계’는 추측하지 않고 뜻과 용어 지위를 물었다."
+    },
+    "T06": {
+      "criteriaId": "T06", "outputSha256": "c73bc5d6db915e031ce24c9d207b650a698c01a3872c88b3909b3d93cac9cb85",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "`Goal Contract`, `허용 효과`, Markdown 링크의 라벨과 href를 그대로 유지했고, 명칭 변경 시 용어집·표제·링크 라벨·본문 참조를 함께 검토하라는 조치를 제시했다."
+    },
+    "T07": {
+      "criteriaId": "T07", "outputSha256": "a032d980c63a81bc83c095d301780e1fe15e056b230c102af590f8ae711a7b42",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "notApplicable"},
+      "result": "pass", "reason": "운영 계약, 권위 상태, 실행 경계를 모두 보존하고 단계 순서도 유지했으며, 세 표현의 정의를 확인하기 전에는 문장을 확정하지 않았다."
+    },
+    "D01": {
+      "criteriaId": "D01", "outputSha256": "ed9db603a79b81e741c67892f8b6be792b8583e6be91994a2e08abef9dd5d028",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "pass"},
+      "result": "pass", "reason": "테스트 근거 부재, 구현자의 자기 감사, 이전 결과 대상의 오래된 감사 자료 재제출이라는 세 조건을 병렬로 유지했다. 감사 행위와 제출 자료를 구분해 일반어를 풀었고 완료 확인서 생성 금지, MCP 실행 중 검사, 스킬 하나를 직접 사용할 가능성도 보존했다. D02와 달리 일반어만 자연스럽게 바꿨다."
+    },
+    "D02": {
+      "criteriaId": "D02", "outputSha256": "3c5c01ace31a52d79efdad7e81374d5c6a9f657f0d22a1e372ed5f6485e64bed",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "pass"},
+      "result": "pass", "reason": "세 실패 조건, 완료 금지, 실제 실행 중 검사와 마지막 가능 양태를 유지하면서 고정 용어 ‘낡은 감사’, ‘완료 영수증’, ‘MCP 실행 계층’을 정확히 보존했다. D01과의 처리 차이는 요청에서 명시한 용어 지위와 일치한다."
+    },
+    "X01": {
+      "criteriaId": "X01", "outputSha256": "98f30374de53c82ecc03641d17c325f293c9c7c6174a1a4b05266af4f4f0dcae",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "pass"},
+      "result": "pass", "reason": "요청에서 확인된 뜻에 따라 어색한 ‘현장 메모 환류’를 ‘현장 메모를 반영한 수정안’으로 풀었고 연구원, 제출 행위와 연구실장을 유지했다. X02~X04와 달리 일반 설명일 때만 교정했다."
+    },
+    "X02": {
+      "criteriaId": "X02", "outputSha256": "281de3b866d029fc3415c2ee5d33996fdb6a3471899ca24635d34d5917f8e514",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "pass"},
+      "result": "pass", "reason": "독자가 아는 정상 동사 용례 ‘환류할 것’을 불필요하게 바꾸지 않고 다음 연도 운영안, 올해 평가와 개선점의 관계를 그대로 유지했다. X01의 교정을 어근 전체에 확대하지 않았다."
+    },
+    "X03": {
+      "criteriaId": "X03", "outputSha256": "0b546037c28fb13bc40d384ebad2674a3c863a6fbe273e6d2e18056bdb8a5fab",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "pass"},
+      "result": "pass", "reason": "정식 행사명 「푸른샘 환류학교」를 문자 그대로 보존하고 참가 신청, 9월 18일과 마감 양태도 유지했다. 같은 어근이라는 이유로 고정명을 개명하지 않았다."
+    },
+    "X04": {
+      "criteriaId": "X04", "outputSha256": "3b731439ba781d4fd99332deef39c72e0e4d715805021471489e4ffdbc66e885",
+      "dimensions": {"meaningPreservation": "pass", "requestCompliance": "pass", "naturalness": "pass", "terminologyJudgment": "pass", "pairwiseContrast": "pass"},
+      "result": "pass", "reason": "‘솔빛 환류판’을 화면명이나 일반 표현 중 하나로 확정하지 않고 원 질문을 보존했으며, 표현의 지위와 지시 대상을 확인하는 질문을 덧붙였다. X01의 교정을 모호한 용례에 기계적으로 적용하지 않았다."
+    }
+  },
+  "overall": "pass",
+  "limitations": "독립 실행 1회와 독립 감사 1회, 동결 뒤 선정한 ‘환류’ 한 어휘군에서 관측한 결과이므로 반복 실행 안정성이나 모든 어휘로의 일반화를 입증하지 않는다. 감사자는 제한된 정본 파일만 읽었고 다른 evidence, 기존 audit, 작업 대화와 과거 결론은 참조하지 않았다."
+}

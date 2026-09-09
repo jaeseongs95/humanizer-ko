@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "artifactKind": "transfer-freeze",
+  "suiteId": "humanizer-ko/2.0.2",
+  "frozenAt": "2026-09-09T22:09:03.9845260+09:00",
+  "bindings": {
+    "skill": {
+      "path": "skills/humanizer-ko/SKILL.md",
+      "sha256": "8fcde9b9e8182ab06e442f6acdbfd6a26cca64fb90b7e1095e7604c87592902a"
+    },
+    "readme": {
+      "path": "README.md",
+      "sha256": "1f5def1f6fa3bbcf1c05f5f3b246266551eb865d7bfc1b7cd9fc24f5162a94f4"
+    },
+    "developmentCases": {
+      "path": "tests/cases/2.0.2.json",
+      "sha256": "0ed24905abd85265dec8f2e35830a1522f5768aaf2cf7dadf785fecb4e71922e"
+    }
+  },
+  "holdoutAuthor": {
+    "agent": "/root/evaluation_design/fresh_holdout_author",
+    "scope": "SKILL.md만 읽고, 기존 대화·README·테스트·평가 규약·과거 결과를 보지 않은 채 X01-X04를 작성했습니다."
+  },
+  "limitations": "이 기록은 동결된 구현과 비전이 사례의 해시 및 작성자 분리를 결속합니다. 단일 실행의 반복 안정성이나 모든 어휘 일반화는 입증하지 않습니다."
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 3,
+  "artifactKind": "behavior-execution",
+  "suiteId": "humanizer-ko/2.0.2",
+  "bindings": {
+    "skill": {"path": "skills/humanizer-ko/SKILL.md", "sha256": "8fcde9b9e8182ab06e442f6acdbfd6a26cca64fb90b7e1095e7604c87592902a"},
+    "readme": {"path": "README.md", "sha256": "1f5def1f6fa3bbcf1c05f5f3b246266551eb865d7bfc1b7cd9fc24f5162a94f4"},
+    "behaviorCases": {"path": "tests/BEHAVIOR_CASES.md", "sha256": "753b285fdb830f884674d803bd2851bd8c3e5c117781e5c4122bb2ac2c7ef624"},
+    "caseSet": {"path": "tests/cases/2.0.2.json", "sha256": "22f29b760d9bfa28cf33bd3edcfab717a808f5e7f0e5bb8e23f50c2761a00112"},
+    "protocol": {"path": "tests/EVALUATION_PROTOCOL.md", "sha256": "00cb4ff8cd9d59631770c4bb222a0fa7ca5111693385722c9e3de5482c383cab"},
+    "freeze": {"path": "tests/evidence/2.0.2/freeze.json", "sha256": "72937bce4ec5bae0b815c4f13340259a27ee6772c7dcc25eb3a53e1fa431d7aa"}
+  },
+  "execution": {
+    "runId": "forward-20260909-structural-03",
+    "agent": "/root/evaluation_design/fresh_behavior_runner_3",
+    "model": "withheld",
+    "reasoning": "withheld",
+    "completedAt": "2026-09-09T22:19:58.8161314+09:00"
+  },
+  "outputs": {
+    "R01": "지금 보이는 정보만으로는 그 설정이 맞는지, 저장 후 다음 작업부터 적용되는지 확인할 수 없습니다. 설정 이름이나 화면을 보내 주세요.",
+    "R02": "운영팀 여러분,\n\n배포일은 2026년 9월 12일이며, 점검 시간은 14:00~15:00입니다. 담당자는 김민수입니다. 운영 문서는 https://example.com/runbook 에서 확인해 주세요.\n\n감사합니다.",
+    "R03": "운영팀은 “오류 2건을 확인했다”고 보고했습니다. 점검 명령은 `check --dry-run`입니다. 자세한 절차는 https://example.com/runbook?mode=test&step=2 에 있습니다.",
+    "R04": "This release keeps the Retry-After header unchanged. 이번 변경은 업데이트입니다. timeout은 45초로 설정합니다. The rollback command is `deploy --rollback`.",
+    "T01": "1.0 출시 여부를 판정하는 수용 조건을 1.0의 수용 기준이라고 한다. Engine을 설치할 때 지켜야 할 조건에는 wheel에 포함할 파일, 필수 의존성, 지원할 스키마 버전의 범위를 적는다.",
+    "T02": "시공사는 발주처와 설치 공사 계약을 체결했다. SDK는 기존 API 계약을 유지한다.",
+    "T03": "문서에는 “설치 계약은 2026년 9월 12일까지 유효하다”라고 적혀 있다. 원장의 필드명은 `intent`와 `receipt`다.",
+    "T04": "운영 계약을 활성화한다.\n\n‘운영 계약’이 무엇을 가리키는지 알려 줘.",
+    "T05": "현재 기준으로 삼는 구현은 `runner.py`이며, 문서와 동작이 다르면 `runner.py`를 따른다. 허용되는 변경은 `issue` 생성과 `label` 변경뿐이다. schema 경계는 v2까지다. 작업 상태는 `observe`로 관측한다. 연구팀은 약물 효과를 비교했고, 운영팀은 저장소 접근 권한을 검토했다.\n\n‘schema 경계’가 무엇을 뜻하는지, 팀에서 정한 용어인지 확인해 줘.",
+    "T06": "사용자 요청을 `Goal Contract`로 정규화한다. 사용자는 목표, 범위, `허용 효과`, 운영 정책을 승인한다. 세부 기준은 [1.0 계약](docs/redesign-1.0-contract.md)에 정의되어 있다.\n\n명칭을 바꾸려면 용어집, 표제, 링크 라벨, 본문 참조를 함께 검토해야 한다.",
+    "T07": "다음 단계에서 운영 계약을 활성화하고 권위 상태를 갱신한 뒤 실행 경계를 승인한다.\n\n문장을 확정하려면 ‘운영 계약’, ‘권위 상태’, ‘실행 경계’가 각각 무엇을 가리키는지 확인해 줘.",
+    "D01": "테스트 근거가 없거나, 구현자가 자신의 결과를 직접 감사했거나, 이전 결과를 대상으로 한 오래된 감사 자료를 다시 제출한 경우에는 완료 확인서를 생성하지 않습니다. 이 조건은 안내 문구에만 적힌 권고가 아니라 MCP의 실행 계층에서 실제 실행 중에 검사합니다. 간단한 요청에는 필요한 스킬 하나만 직접 사용할 수도 있습니다.",
+    "D02": "테스트 근거가 빠졌거나, 구현자가 자신의 결과를 감사했거나, 이전 결과에 대한 낡은 감사를 다시 제출한 경우에는 완료 영수증을 만들지 않습니다. 이 조건은 안내 문구에만 적힌 권고가 아니라 MCP 실행 계층에서 실제 실행 중에 검사합니다. 간단한 요청에는 필요한 스킬 하나만 직접 사용할 수도 있습니다.",
+    "X01": "연구원은 현장 메모를 반영한 수정안을 연구실장에게 제출했습니다.",
+    "X02": "다음 연도 운영안에 올해 평가에서 얻은 개선점을 환류할 것.",
+    "X03": "「푸른샘 환류학교」 참가 신청은 9월 18일에 마감됩니다.",
+    "X04": "솔빛 환류판은 다음 회의 전에 갱신되나요?\n\n이 표현이 화면 이름인지 일반 표현인지, 무엇을 가리키는지 확인해 주세요."
+  }
+}

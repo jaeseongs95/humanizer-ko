@@ -11,17 +11,21 @@ from collections import Counter
 import hashlib
 import json
 import re
+import unicodedata
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-CURRENT_SUITE = "humanizer-ko/2.0.1"
+CURRENT_SUITE = "humanizer-ko/2.0.2"
 CURRENT_PATHS = {
     "skill": "skills/humanizer-ko/SKILL.md",
-    "caseSet": "tests/cases/2.0.1.json",
+    "readme": "README.md",
+    "behaviorCases": "tests/BEHAVIOR_CASES.md",
+    "caseSet": "tests/cases/2.0.2.json",
     "protocol": "tests/EVALUATION_PROTOCOL.md",
-    "evidence": "tests/evidence/2.0.1/final.json",
-    "audit": "tests/evidence/2.0.1/audit.json",
+    "freeze": "tests/evidence/2.0.2/freeze.json",
+    "evidence": "tests/evidence/2.0.2/final.json",
+    "audit": "tests/evidence/2.0.2/audit.json",
 }
 CAPTURE_PATTERNS = {
     "directQuote": r"“[^”\r\n]*”|‘[^’\r\n]*’",
@@ -46,12 +50,22 @@ REQUIRED_DIMENSIONS = {
     "requestCompliance",
     "naturalness",
     "terminologyJudgment",
+    "pairwiseContrast",
 }
+PARTITIONS = {"regression", "development", "transfer"}
+PAIR_ROLES = {"correction", "normal", "fixed", "ambiguous"}
+ALL_ROLES = PAIR_ROLES | {"unpaired"}
+CORE_DIMENSIONS = REQUIRED_DIMENSIONS - {"pairwiseContrast"}
 
 
 def normalized(text):
     """운영체제 줄바꿈 차이를 제거한 정본 문자열을 반환한다."""
     return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def comparison_key(text):
+    """유니코드·줄바꿈·끝 공백 차이로 최소대립 검사를 우회하지 못하게 한다."""
+    return " ".join(unicodedata.normalize("NFC", normalized(text)).split())
 
 
 def sha256_text(text):
@@ -193,17 +207,39 @@ def load_current_cases(path):
     if not isinstance(raw_cases, list) or not raw_cases:
         raise ValueError("사례 정본의 cases는 비어 있지 않은 배열이어야 합니다.")
 
-    cases, inputs = {}, set()
+    cases, inputs, families = {}, {}, {}
     for index, raw_case in enumerate(raw_cases, 1):
         case = require_object(raw_case, f"사례 {index}")
         case_id = require_string(case.get("id"), f"사례 {index}.id")
         criteria_id = require_string(case.get("criteriaId"), f"{case_id}.criteriaId")
         request = require_string(case.get("request"), f"{case_id}.request")
         prompt = require_string(case.get("input"), f"{case_id}.input")
+        partition = require_string(case.get("partition"), f"{case_id}.partition")
+        role = require_string(case.get("role"), f"{case_id}.role")
+        family_id = case.get("familyId")
+        root_families = case.get("rootFamilies")
+        if partition not in PARTITIONS:
+            raise ValueError(f"{case_id}: 알 수 없는 partition: {partition!r}")
+        if role not in ALL_ROLES:
+            raise ValueError(f"{case_id}: 알 수 없는 role: {role!r}")
+        if family_id is not None and (not isinstance(family_id, str) or not family_id):
+            raise ValueError(f"{case_id}.familyId는 null 또는 비어 있지 않은 문자열이어야 합니다.")
+        if not isinstance(root_families, list) or not all(
+                isinstance(value, str) and value for value in root_families):
+            raise ValueError(f"{case_id}.rootFamilies는 문자열 배열이어야 합니다.")
+        if len(root_families) != len(set(root_families)):
+            raise ValueError(f"{case_id}: rootFamilies가 중복됩니다.")
+        if role == "unpaired":
+            if family_id is not None or root_families:
+                raise ValueError(f"{case_id}: unpaired 사례에는 familyId나 rootFamilies를 둘 수 없습니다.")
+        elif family_id is None:
+            raise ValueError(f"{case_id}: 대조 사례에는 familyId가 필요합니다.")
+        if partition == "transfer" and not root_families:
+            raise ValueError(f"{case_id}: transfer 사례에는 rootFamilies가 필요합니다.")
+        if partition != "transfer" and root_families:
+            raise ValueError(f"{case_id}: transfer가 아닌 사례에는 rootFamilies를 둘 수 없습니다.")
         if case_id in cases:
             raise ValueError(f"사례 ID가 중복됩니다: {case_id}")
-        if prompt in inputs:
-            raise ValueError(f"사례 원문이 중복됩니다: {case_id}")
         protection = require_object(case.get("protection"), f"{case_id}.protection")
         kinds = protection.get("captureKinds")
         literals = protection.get("literals")
@@ -228,11 +264,105 @@ def load_current_cases(path):
             "criteriaId": criteria_id,
             "request": request,
             "input": prompt,
+            "partition": partition,
+            "role": role,
+            "familyId": family_id,
+            "rootFamilies": root_families,
             "captureKinds": kinds,
             "literals": literals,
         }
-        inputs.add(prompt)
+        inputs.setdefault(comparison_key(prompt), []).append(case_id)
+        if family_id is not None:
+            families.setdefault(family_id, []).append(case_id)
+
+    for prompt, case_ids in inputs.items():
+        if len(case_ids) == 1:
+            continue
+        family_ids = {cases[case_id]["familyId"] for case_id in case_ids}
+        roles = {cases[case_id]["role"] for case_id in case_ids}
+        if len(case_ids) != 2 or len(family_ids) != 1 or None in family_ids or roles != {"correction", "fixed"}:
+            raise ValueError(
+                f"사례 원문 중복은 같은 familyId의 correction/fixed 쌍에만 허용됩니다: {case_ids}"
+            )
+
+    transfer_families = set()
+    for family_id, case_ids in families.items():
+        partitions = {cases[case_id]["partition"] for case_id in case_ids}
+        roles = {cases[case_id]["role"] for case_id in case_ids}
+        roots = {tuple(cases[case_id]["rootFamilies"]) for case_id in case_ids}
+        if "transfer" in partitions:
+            transfer_families.add(family_id)
+            if partitions != {"transfer"} or roles != PAIR_ROLES or len(case_ids) != 4:
+                raise ValueError(
+                    f"transfer family {family_id!r}에는 correction/normal/fixed/ambiguous가 각각 하나씩 필요합니다."
+                )
+            if len(roots) != 1:
+                raise ValueError(f"transfer family {family_id!r}의 rootFamilies가 서로 다릅니다.")
+        elif partitions == {"development"}:
+            if roles != {"correction", "fixed"} or len(case_ids) != 2:
+                raise ValueError(
+                    f"development family {family_id!r}에는 correction/fixed가 각각 하나씩 필요합니다."
+                )
+            prompts = {comparison_key(cases[case_id]["input"]) for case_id in case_ids}
+            if len(prompts) != 1:
+                raise ValueError(f"development family {family_id!r}의 correction/fixed 원문이 다릅니다.")
+        else:
+            raise ValueError(f"family {family_id!r}는 development 또는 transfer 사례로만 구성해야 합니다.")
+    for case_id, case in cases.items():
+        if case["partition"] == "regression" and case["role"] != "unpaired":
+            raise ValueError(f"{case_id}: regression 사례의 role은 unpaired여야 합니다.")
+    if not transfer_families:
+        raise ValueError("transfer family가 하나 이상 필요합니다.")
+
+    implementation_corpus = normalized(
+        read_text(ROOT / CURRENT_PATHS["skill"]) + "\n" +
+        read_text(ROOT / CURRENT_PATHS["readme"]) + "\n" +
+        "\n".join(
+            cases[case_id]["request"] + "\n" + cases[case_id]["input"]
+            for case_id in cases if cases[case_id]["partition"] != "transfer"
+        )
+    ).casefold()
+    for family_id in sorted(transfer_families):
+        case_ids = families[family_id]
+        for root in cases[case_ids[0]]["rootFamilies"]:
+            if normalized(root).casefold() in implementation_corpus:
+                raise ValueError(
+                    f"transfer family {family_id!r}의 어근 {root!r}이 동결 전 구현·개발 자료에 이미 있습니다."
+                )
+            for case_id in case_ids:
+                if unicodedata.normalize("NFC", root).casefold() not in unicodedata.normalize(
+                        "NFC", cases[case_id]["input"]).casefold():
+                    raise ValueError(
+                        f"{case_id}: 선언한 transfer 어근 {root!r}이 실제 입력에 없습니다."
+                    )
     return case_set, cases
+
+
+def verify_transfer_freeze(path, paths, cases):
+    freeze = require_object(json.loads(read_text(path)), "전이 동결 기록")
+    if freeze.get("schemaVersion") != 1 or freeze.get("artifactKind") != "transfer-freeze":
+        raise ValueError("전이 동결 기록의 schemaVersion/artifactKind가 올바르지 않습니다.")
+    if freeze.get("suiteId") != CURRENT_SUITE:
+        raise ValueError(f"전이 동결 기록의 suiteId는 {CURRENT_SUITE!r}여야 합니다.")
+    bindings = require_object(freeze.get("bindings"), "전이 동결 기록 bindings")
+    verify_binding(bindings, "skill", CURRENT_PATHS["skill"], paths["skill"])
+    verify_binding(bindings, "readme", CURRENT_PATHS["readme"], paths["readme"])
+    development = require_object(bindings.get("developmentCases"), "bindings.developmentCases")
+    if development.get("path") != CURRENT_PATHS["caseSet"]:
+        raise ValueError("bindings.developmentCases.path가 현재 사례 정본 경로와 다릅니다.")
+    frozen_cases = [
+        raw_case for raw_case in json.loads(read_text(paths["caseSet"]))["cases"]
+        if raw_case.get("partition") != "transfer"
+    ]
+    canonical = json.dumps(frozen_cases, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    expected = sha256_text(canonical)
+    recorded = validate_hash(development.get("sha256"), "bindings.developmentCases.sha256")
+    if recorded != expected:
+        raise ValueError("bindings.developmentCases가 현재 비전이 사례 정본과 다릅니다.")
+    author = require_object(freeze.get("holdoutAuthor"), "holdoutAuthor")
+    require_string(author.get("agent"), "holdoutAuthor.agent")
+    require_string(author.get("scope"), "holdoutAuthor.scope")
+    return sha256_text(read_text(path))
 
 
 def protocol_criteria(document):
@@ -295,6 +425,7 @@ def check_current(evidence_path):
         raise ValueError("실행 기록에 원문 복사본 sources를 둘 수 없습니다. 사례 정본을 참조하세요.")
 
     _, cases = load_current_cases(paths["caseSet"])
+    freeze_hash = verify_transfer_freeze(paths["freeze"], paths, cases)
     protocol = read_text(paths["protocol"])
     criteria = protocol_criteria(protocol)
     for case_id, case in cases.items():
@@ -306,9 +437,14 @@ def check_current(evidence_path):
     bindings = require_object(evidence.get("bindings"), "실행 기록 bindings")
     bound_hashes = {
         "skillSha256": verify_binding(bindings, "skill", CURRENT_PATHS["skill"], paths["skill"]),
+        "readmeSha256": verify_binding(bindings, "readme", CURRENT_PATHS["readme"], paths["readme"]),
+        "behaviorCasesSha256": verify_binding(bindings, "behaviorCases", CURRENT_PATHS["behaviorCases"], paths["behaviorCases"]),
         "caseSetSha256": verify_binding(bindings, "caseSet", CURRENT_PATHS["caseSet"], paths["caseSet"]),
         "protocolSha256": verify_binding(bindings, "protocol", CURRENT_PATHS["protocol"], paths["protocol"]),
+        "freezeSha256": verify_binding(bindings, "freeze", CURRENT_PATHS["freeze"], paths["freeze"]),
     }
+    if bound_hashes["freezeSha256"] != freeze_hash:
+        errors.append("실행 기록의 freezeSha256가 검증한 전이 동결 기록과 다릅니다.")
     execution = require_object(evidence.get("execution"), "execution")
     executor_agent = require_string(execution.get("agent"), "execution.agent")
     outputs = require_object(evidence.get("outputs"), "outputs")
@@ -393,6 +529,14 @@ def check_current(evidence_path):
                 errors.append(f"{case_id}: 감사 dimension 이름이 올바르지 않습니다.")
             if value not in ALLOWED_RESULTS:
                 errors.append(f"{case_id}/{dimension}: 알 수 없는 판정값 {value!r}")
+        for dimension in CORE_DIMENSIONS:
+            if dimensions.get(dimension) == "notApplicable":
+                errors.append(f"{case_id}/{dimension}: 핵심 감사 축은 notApplicable일 수 없습니다.")
+        pairwise = dimensions.get("pairwiseContrast")
+        if cases[case_id]["role"] == "unpaired" and pairwise != "notApplicable":
+            errors.append(f"{case_id}: unpaired 사례의 pairwiseContrast는 notApplicable이어야 합니다.")
+        if cases[case_id]["role"] != "unpaired" and pairwise != "pass":
+            errors.append(f"{case_id}: 대조 사례의 pairwiseContrast는 pass여야 합니다.")
         result_value = result.get("result")
         if result_value not in ALLOWED_RESULTS:
             errors.append(f"{case_id}: 알 수 없는 종합 판정값 {result_value!r}")

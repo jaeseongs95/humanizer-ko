@@ -22,6 +22,8 @@ jobs:
           python-version: "3.12"
       - name: 패키지 파일 검증
         run: python3 scripts/validate-package.py
+      - name: agent-governance-suite payload 검증
+        run: python3 scripts/validate-suite-payload.py --list
       - name: 검증기 회귀 테스트
         run: python3 scripts/test-validation.py
       - name: 기록된 행동 출력의 보호 문자열 검증

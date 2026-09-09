@@ -45,6 +45,18 @@ class PackageValidationTests(unittest.TestCase):
             cwd=self.root, capture_output=True, text=True, encoding="utf-8",
         )
 
+    def run_suite_payload_validator(self, *arguments):
+        return subprocess.run(
+            [
+                sys.executable,
+                "-X",
+                "utf8",
+                str(self.root / "scripts/validate-suite-payload.py"),
+                *arguments,
+            ],
+            cwd=self.root, capture_output=True, text=True, encoding="utf-8",
+        )
+
     @staticmethod
     def content_hash(path):
         text = path.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
@@ -100,9 +112,38 @@ class PackageValidationTests(unittest.TestCase):
         self.assertIn(diagnostic, result.stderr)
         self.assertNotIn("Traceback", result.stderr)
 
+    def assert_suite_payload_rejected(self, diagnostic):
+        result = self.run_suite_payload_validator()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(diagnostic, result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
     def test_valid_package(self):
         result = self.run_validator()
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_valid_suite_payload(self):
+        result = self.run_suite_payload_validator("--list")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(
+            "skills/humanizer-ko/SKILL.md -> skills/humanizer-ko/SKILL.md",
+            result.stdout,
+        )
+        self.assertNotIn("README.md", result.stdout)
+        self.assertNotIn(".codex-plugin", result.stdout)
+
+    def test_suite_payload_rejects_repository_readme(self):
+        path = self.root / "skills/humanizer-ko/README.md"
+        path.write_text("# 저장소 전용 설명\n", encoding="utf-8")
+        self.assert_suite_payload_rejected("저장소 전용 파일")
+
+    def test_suite_payload_rejects_broken_local_link(self):
+        path = self.root / "skills/humanizer-ko/SKILL.md"
+        path.write_text(
+            path.read_text(encoding="utf-8") + "\n[없는 참고 자료](references/missing.md)\n",
+            encoding="utf-8",
+        )
+        self.assert_suite_payload_rejected("로컬 링크 대상이 없습니다")
 
     def test_license_text_change(self):
         self.replace("LICENSE", "without restriction", "with restriction")

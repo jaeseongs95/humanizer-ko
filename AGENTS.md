@@ -13,7 +13,6 @@
 - `examples/`의 ChatGPT·Codex·Claude 지침 예시는 일반 답변과 한국어 산문 작업을 구분합니다.
 - `.claude-plugin/`은 같은 Skill 원본을 사용하는 Claude 플러그인과 marketplace 메타데이터를 제공합니다.
 - `scripts/validate-package.py`는 공유 식별자, 버전, 패턴 번호와 라이선스 고지를 검사합니다.
-- `scripts/validate-suite-payload.py`는 `agent-governance-suite`에 복사할 `skills/humanizer-ko/`의 파일 경계, 이름과 로컬 링크를 검사하고 대상 경로를 나열합니다.
 - `scripts/check-behavior-artifacts.py`는 기록된 출력에서 코드·인용·URL·서식의 문자 보존을 확인합니다. 의미·자연스러움은 판정하지 않습니다.
 - `tests/BEHAVIOR_CASES.md`는 수동 행동 검증의 입력과 합격 조건을 정의합니다.
 - `tests/EVALUATION_PROTOCOL.md`는 출력 전에 고정하는 의미 보존 판정 기준과 독립 검증 절차를 정의합니다. `tests/HOLDOUT_CASES.md`는 별도 주제의 검증 입력입니다.
@@ -44,7 +43,6 @@
 
 ```bash
 python3 scripts/validate-package.py
-python3 scripts/validate-suite-payload.py --list
 python3 scripts/test-validation.py
 python3 scripts/check-behavior-artifacts.py
 npx --yes skills@1.5.20 add . --list

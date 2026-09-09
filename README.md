@@ -44,16 +44,6 @@ npx skills add jaeseongs95/humanizer-ko --global --agent codex
 
 다른 프로젝트에만 설치하려면 그 프로젝트 폴더에서 `--global`을 빼고 실행합니다. 설치된 Skill은 다음 작업부터 사용합니다. 수동 설치 시에는 `skills/humanizer-ko/` 디렉터리 전체를 복사합니다. 이 디렉터리에는 Skill 원본과 함께 `LICENSE`, `THIRD_PARTY_NOTICES.md`가 들어 있습니다.
 
-### agent-governance-suite에 포함
-
-`agent-governance-suite`에는 이 저장소 전체가 아니라 `skills/humanizer-ko/` 디렉터리만 같은 경로로 복사합니다. 이 디렉터리가 독립 실행에 필요한 Skill 원본이며, 대상 경로도 `skills/humanizer-ko/`입니다.
-
-루트의 `.codex-plugin/`, `.claude-plugin/`, `examples/`, `scripts/`, `tests/`, `README.md`는 이 저장소의 배포·검증·설명용 파일이므로 모노레포 Skill payload에 포함하지 않습니다. 모노레포의 플러그인 manifest와 테스트는 해당 저장소의 공통 구조와 도구에 맞춰 별도로 연결합니다. 복사할 파일과 대상 경로는 다음 명령으로 검사하고 확인할 수 있습니다.
-
-```bash
-python3 scripts/validate-suite-payload.py --list
-```
-
 ### Claude Code
 
 Claude Code에서는 다음 명령으로 설치합니다.
@@ -178,7 +168,6 @@ $humanizer-ko를 사용해 운영팀에 보낼 배포 안내 메일을 작성해
 
 ```bash
 python3 scripts/validate-package.py
-python3 scripts/validate-suite-payload.py --list
 python3 scripts/test-validation.py
 python3 scripts/check-behavior-artifacts.py
 ```
